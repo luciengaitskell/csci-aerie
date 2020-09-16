@@ -118,10 +118,12 @@ def ex4(lis1,lis2):
 
 
 """
-LUC: O(N^2)
+LUC: O(N1*N2)
+N1=len(lis1), N2=len(lis2)
 
-This is similar to exercise 2,3 as there are two nested loops.
-Each loop will execute ~3 to ~9 operations. Regardless, this resolves to the same answer.
+This is similar to exercise 2,3 as there are two nested loops, however dependent on two list lengths.
+Each loop will execute ~3 to ~9 operations. Regardless, the constant is insignificant and instead the two loops will
+execute in total N1*N2 times.
 
 """
 
@@ -141,7 +143,7 @@ def ex5(lis1,lis2):
 LUC: O(N1*N2)
 for N1=len(lis1), N2=len(lis2)
 
-This is similar to exercise 2,3,4 as there are two nested loops dependent on list lengths.
+This is similar to exercise 4 as there are two nested loops dependent on list lengths.
 The third loop is constant, and therefore does not depend on the inputs. This is the same for the `print` statement.
 
 """
@@ -196,9 +198,9 @@ LUC: 1 & 2 are both equivalent to O(N)
 LUC: O(N1*log(N2)) 
 for N1=num strings, N2=len of strings
 
-assuming the final 'full list' sorting is also log linear: O(N1*log(N2) + log(N1)) which resolves to the answer.
+assuming the final full list sorting is also log linear: O(N1*log(N2) + log(N1)) which resolves to the answer.
 This is because the log(N2) string sorting has to occur for the N1 number of strings. The final string sorting would
-take log(N1), as the sorting occurs along the number of strings in the list. This second term is insignificant
+take log(N1), as the sorting time depends on the number of strings in the list. This second term is insignificant
 when compared to the first nlog(n).
 
 """
@@ -227,7 +229,7 @@ def ex9(items):
 LUC: O(N)
 
 Adding each operation together yields O(5 + N + N + 2) = O(2N) = O(N)
-The constant operations are insignificant, and the serial loops also yield a constant factor.
+The constant operations are insignificant, and the serial, identical loops also yield a constant (2) factor.
 
 """
 
@@ -290,7 +292,7 @@ The constant operations are insignificant (creating list, returning, multiplying
 Therefore the only significant operation is the `for` loop, which is O(N) complexity.
 
 The space complexity is also on the order of N.
-There is both the initial list (n), and a new list of same length containing the squares.
+There is both an initial list (n), and a new list of same length containing the squares, yielding a 2N total.
 As constants are not significant, it resolves to N. 
 
 Reference: https://www.ics.uci.edu/~pattis/ICS-33/lectures/complexitypython.txt
