@@ -179,11 +179,12 @@ Reference: https://www.ics.uci.edu/~pattis/ICS-33/lectures/complexitypython.txt
 # 4. O(N + M)
 
 """
-LUC: 1 & 2 are both equivalent to O(N)
+LUC: 1 & 2 & 3 are both equivalent to O(N)
 
 1. N+P < N+N/2 therefore O(N+P) <= O(N+N/2) = O((3/2)*N) = O(N), as constants are not important in BigO
     and because O(N) <= O(N+P) must be true, then O(N+P) = O(N)
 2. O(2N) = O(N), as constants are not important in BigO
+3. O(N + log(N)), as N >> log(N) for a very large N
 """
 
 
@@ -195,13 +196,14 @@ LUC: 1 & 2 are both equivalent to O(N)
 # Hint: runtime of sorting a string (worst case) is log linear
 
 """
-LUC: O(N1*log(N2)) 
+LUC: O(N1*N2*log(N2) + N2*N1*log(N1)) 
 for N1=num strings, N2=len of strings
 
-assuming the final full list sorting is also log linear: O(N1*log(N2) + log(N1)) which resolves to the answer.
-This is because the log(N2) string sorting has to occur for the N1 number of strings. The final string sorting would
-take log(N1), as the sorting time depends on the number of strings in the list. This second term is insignificant
-when compared to the first nlog(n).
+assuming the final full list sorting is also log linear: O(N1*N2*log(N2) + N2*N1*log(N1)) which resolves to the answer.
+This is because the N2*log(N2) string sorting has to occur for the N1 number of strings. The final string sorting would
+take N1*log(N1), along strings of length N2, as the sorting time also depends on the number of strings in the list.
+
+The two terms are both significant in this case.
 
 """
 
