@@ -80,7 +80,7 @@ else:
 starting_number = 1
 
 # Define a while loop that prints out the value of starting_number until the starting_number is greater than 5
-while starting_number > 5:
+while starting_number <= 5:
     print(starting_number)
     starting_number += 1
     # Make sure to increment the number as well in each loop)
