@@ -308,12 +308,11 @@ MAT = [
 # 1. Given an array of integers and an integer k, you need to find the total number of continuous subarrays whose sum equals to k.
 
 # TODO: Could swap k,counter_sum to just k
-def sumk(arr, k, counter_sum=0):
+def sumk(arr, k):
     """ LUC
 
     :param arr: array to search through
     :param k: target sum
-    :param counter_sum: exisitng count
     :return: array of arrays of valid sum sets
     """
     valid_sets = []  # list of valid sets
@@ -324,11 +323,10 @@ def sumk(arr, k, counter_sum=0):
         e = arr[i]  # Save current value
         del arr_copy[i]  # Remove current element to prevent double counting and permutations on this recursive level
 
-        curr_sum = counter_sum + e  # Evaluate current sum
-        if curr_sum == k:  # If current sum is target
+        if e == k:  # If current value is target
             valid_sets.append([e])  # Add final ending value to valid sets sets list
-        elif curr_sum < k:  # If below target
-            for l in sumk(arr_copy, k, curr_sum):  # Get each solution set that worked on subset
+        elif e < k:  # If current value below target
+            for l in sumk(arr_copy, k-e):  # Get each solution set that worked on subset with target sum `k-e`
                 valid_sets.append([e]+l)  # add current value on to each solution from subset
 
     return valid_sets
