@@ -44,9 +44,9 @@ TODO Question 2 - Why is the average run time for linear different than the wors
 TODO Question 3 - For binary, why is the average time the SAME as the worst? 
 
     # LUC: Binary search, by nature, will continue to half the size of the array being searched, until the target value
-        is located. As a result, the worst time is log(n). Therefore  
-
-========NEED HELP
+        is located. As a result, the worst time is log(n), if all elements after halving have to be searched. Due to the
+        probability of the distribution of the target value, it's far more likely that the runtime for a given execution
+        is closer to the worst case then the best case.  
 
 C. Insertion sort is how we sort through a list. 
 
@@ -102,7 +102,6 @@ TODO Question 8 - what are the 5 basic operations of any data structure?
         3. Remove
         4. Search/Find
         5. Sort
-===== CHECK
 
 
 TODO Question 9 - in python, a list is a dynamic array, what are the functions that correlate to that 5 basic operations?
@@ -307,7 +306,7 @@ MAT = [
 
 # 1. Given an array of integers and an integer k, you need to find the total number of continuous subarrays whose sum equals to k.
 
-# TODO: Could swap k,counter_sum to just k
+
 def sumk(arr, k):
     """ LUC
 
