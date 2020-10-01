@@ -143,7 +143,6 @@ def palindrome(node):
         rvrs_i_node = rvrs_i_node.next
 
     return True
-    # NEED TO ADD COMPARISON
 
 
 palindrome_node = Node(0)
