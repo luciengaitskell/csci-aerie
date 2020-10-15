@@ -161,26 +161,25 @@ def subarrays(l, k):
     # Sum count data
     sums = {}
     # structure: {sum: count}
-    #   NOTE: count will mostly be duplicate by the end
-    #       except for single element sub arrays
-    #       THEREFORE: Have to divide by 2 and take ceil
 
     for val in l:   # Iterate through all values
         new_sums = {}   # New calculated sum counts from this value `val`
         for s, s_val in sums.items():   # Iterate through all previous sum/count pairs
             new_s = s+val   # Calculate new sum from existing sum plus this value
-            new_sums[new_s] = sums.get(new_s, 0) + (sums[s] + 1)
-            #   Increment new sum count (starting from 0 if not yet set)
-            #       and add previous sum `s` counts plus 1
+            new_sums[new_s] = sums.get(new_s, 0) + sums[s]
+            #   Increment new sum count (starting from 0 if not yet set) and add previous sum `s` counts
 
         sums.update(new_sums)  # Update sum structure with these changes / new values
 
         sums[val] = sums.get(val, 0) + 1  # Also include this value as single set in sum count
 
-    return math.ceil(sums.get(k, 0)/2)  # Get sums for size k: reference note on `sums`
+    return sums.get(k, 0)  # Get sums for size k
 
 
+assert subarrays([1, 1, 2, 3, 4], 3) == 3
 assert subarrays([1, 1, 2, 3, 4], 4) == 4
+assert subarrays([1, 1, 1, 2, 3, 4], 4) == 7
+assert subarrays([1, 1, 1, 1, 2, 3, 4], 4) == 12
 assert subarrays([1, 2, 3, 4], 4) == 2
 assert subarrays([], 4) == 0
 assert subarrays([2], 4) == 0
