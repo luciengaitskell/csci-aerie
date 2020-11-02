@@ -16,7 +16,7 @@
 \subsection{Approach}
 
 \begin{enumerate}
-    \item Evalutae Big-O of each individual function. Describe: How did you get there? Which parts are 'not important'?
+    \item Evaluate Big-O of each individual function. Describe: How did you get there? Which parts are 'not important'?
     \item Break down into groups based on:
     \begin{itemize}
         \item logarithmic
@@ -33,38 +33,97 @@
     \item Combine the groups into a list
 \end{enumerate}
 
-\subsection{List}
+\subsection{List (with Big-O)}
 
+
+\begin{align}
+    6n\log n &= O(n\log n) \\
+    2^{100} &= O(1) \\
+    \log \log n &= O(\log \log n) \\
+    \log^2 n &= O(\log^2 n) \\
+    2^{2^{n}} &= O(4^{n}) \\
+    \lceil \sqrt{n} \rceil &= O(n^{\frac{1}{2}}) \\
+    n^{0.01} &= O(n^{\frac{1}{100}}) \\
+    \frac{1}{n} &= O(n^{-1}) \\
+    4n^{\frac{3}{2}} &= O(n^{\frac{3}{2}}) \\
+    3n^{0.5} &= O(n^{\frac{1}{2}}) \\
+    5n &= O(n)\\
+    \lfloor 2n \log^2n \rfloor &= O(n \log^2n) \\
+    2^n &= O(2^n) \\
+    n \log_4 n &= O(n \log_4 n) \\
+    4^n &= O(4^n) \\
+    n^3 &= O(n^3) \\
+    n^2 \log n &= O(n^2 \log n) \\
+    \sqrt{\log n} &= O(\sqrt{\log n})
+\end{align}
+
+\subsection{Grouping}
 
 \begin{align*}
-    \log n \\
-    2^{100} \\
-    \log \log n \\
-    \log^2 n \\
-    2^{2^{n}} \\
-    \lceil \sqrt{n} \rceil \\
-    n^{0.01} \\
-    \frac{1}{n} \\
-    4n^{\frac{3}{2}} \\
-    3n^{0.5} \\
-    5n \\
-    \lfloor 2n \log^2n \rfloor \\
-    2^n \\
-    n \log_4 n \\
-    4^n \\
-    n^3 \\
-    n^2 \log n \\
-    \sqrt{\log n}
+    \intertext{\subsubsection*{Constant}}
+    2^{100} &= O(1)
+    \intertext{\subsubsection*{Polylogarithmic}}
+    \sqrt{\log n} &= O(\log^{\frac{1}{2}}n) \\
+    \log^2 n &= O(\log^2 n)
+    \intertext{\subsubsection*{Inverse}}
+    \frac{1}{n} &= O(n^{-1})
+    \intertext{\subsubsection*{Root}}
+    3n^{0.5} &= O(n^{\frac{1}{2}}) \\
+    \lceil \sqrt{n} \rceil &= O(n^{\frac{1}{2}}) \\
+    n^{0.01} &= O(n^{\frac{1}{100}})
+    \intertext{\subsubsection*{Linearithmic}}
+    n \log_4 n &= O(n \log_4 n) \\
+    6n\log n &= O(n\log n)
+    \intertext{\subsubsection*{Polynomial}}
+    n^3 &= O(n^3) \\
+    5n &= O(n) \\
+    4n^{\frac{3}{2}} &= O(n^{\frac{3}{2}})
+    \intertext{\subsubsection*{Exponential}}
+    4^n &= O(4^n) \\
+    2^n &= O(2^n) \\
+    2^{2^{n}} &= O(4^{n})
+    \intertext{\subsubsection*{Other}}
+    \lfloor 2n \log^2n \rfloor &= O(n \log^2n) \\
+    \log \log n &= O(\log \log n) \\
+    n^2 \log n &= O(n^2 \log n)
 \end{align*}
 
-\iffalse
-\begin{center}
-    $\begin{array}{ c c c }
-     6n\log_{3} 3 & cell2 & cell3 \\ 
-     cell4 & cell5 & cell6 \\  
-     cell7 & cell8 & cell9 \\
-    \end{array}$
-\end{center}
-\fi
+\subsection{Sorting Groups}
+
+From smallest to largest:
+\begin{enumerate}
+    \item Constant
+    \item Inverse
+    \item Logarithmic
+    \item Root
+    \item Polynomial
+    \item Exponential
+\end{enumerate}
+
+\vspace{5mm}
+The other equations have to be sorted in-between.
+
+\subsection{Final List}
+\setcounter{equation}{0}
+\begin{align}
+    2^{100} &= O(1) \\
+    \frac{1}{n} &= O(n^{-1}) \\
+    \log \log n &= O(\log \log n) \\
+    \sqrt{\log n} &= O(\log^{\frac{1}{2}}n) \\
+    \log^2 n &= O(\log^2 n) \\
+    6n\log n &= O(n\log n) \\
+    n \log_4 n &= O(n \log_4 n) \\
+    \lfloor 2n \log^2n \rfloor &= O(n \log^2n) \\
+    n^2 \log n &= O(n^2 \log n) \\
+    n^{0.01} &= O(n^{\frac{1}{100}}) \\
+    3n^{0.5} &= O(n^{\frac{1}{2}}) \\
+    \lceil \sqrt{n} \rceil &= O(n^{\frac{1}{2}}) \\
+    5n &= O(n) \\
+    4n^{\frac{3}{2}} &= O(n^{\frac{3}{2}}) \\
+    n^3 &= O(n^3) \\
+    2^n &= O(2^n) \\
+    4^n &= O(4^n) \\
+    2^{2^{n}} &= O(4^{n})
+\end{align}
 
 \end{document}
