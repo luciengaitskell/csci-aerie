@@ -126,4 +126,34 @@ The other equations have to be sorted in-between.
     2^{2^{n}} &= O(4^{n})
 \end{align}
 
+\section{Problem 2}
+\subsection{Approach}
+
+\subsubsection{Question 1}
+\begin{enumerate}
+    \item Look at each loop
+    \item Determine number of steps within each loop
+    \item If a step in the loop is another loop, then determine for that loop and then include it as a step in the original loop
+    \item Determine how many times the loop will execute
+    \item Determine the number of remaining constant steps
+\end{enumerate}
+
+\subsubsection{Question 2}
+\begin{enumerate}
+    \item After determining T(n), setup an equation
+    \item Solve for c and n or show that values exist
+\end{enumerate}
+
+\section{Question 3}
+\subsection{Approach}
+\begin{enumerate}
+    \item "Log time sounds like trees"
+    \item Could have a tree that holds central element
+    \item Smaller elements to left, Greater elements to right
+    \item Removing would cause bubble up
+    \item Adding would cause bubble down
+    \item May have to have null node in the case of even number of nodes: instead would take average of the two
+\end{enumerate}
+
+
 \end{document}
