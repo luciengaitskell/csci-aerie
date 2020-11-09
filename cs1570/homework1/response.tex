@@ -105,24 +105,121 @@ Final organization of equations based on Big-O size.
 \end{align}
 
 \section{Problem 2}
-\subsection{Approach}
+\subsection{Question (a)}
 
-\subsubsection{Question 1}
-\begin{enumerate}
-    \item Look at each loop
-    \item Determine number of steps within each loop
-    \item If a step in the loop is another loop, then determine for that loop and then include it as a step in the original loop
-    \item Determine how many times the loop will execute
-    \item Determine the number of remaining constant steps
-\end{enumerate}
+\begin{align*}
+    T(n) &= \sum_{j=1}^{n} \left(
+                \sum_{k=j}^{n}\left(
+                    1 + \sum_{i=j}^{k}\left(3\right)
+                \right)
+            \right) + 2 \\
+         &= \sum_{j=1}^{n} \left(
+                \sum_{k=j}^{n}\left(
+                    1 + ((k-j) \cdot 3)
+                \right)
+            \right) + 2 \\ 
+        &= \sum_{j=1}^{n} \left(
+                \sum_{k=j}^{n}\left(
+                    1 + 3k - 3j
+                \right)
+            \right) + 2 \\
+        &= \sum_{j=1}^{n} \left(
+                \sum_{k=j}^{n}\left(
+                    3k
+                \right) +
+                \sum_{k=j}^{n}\left(
+                    1 - 3j
+                \right)
+            \right) + 2 \\
+        &= \sum_{j=1}^{n} \left(
+                3 \sum_{k=j}^{n}
+                    k
+                 +
+                (n-j) \cdot (1 - 3j)
+            \right) + 2 \\
+        &= \sum_{j=1}^{n} \left(
+                3 \cdot \frac{n-j}{2} \cdot (n + j)
+                 +
+                (n-j) \cdot (1 - 3j)
+            \right) + 2 \\
+        &= \sum_{j=1}^{n} \left(
+                (n-j) \cdot \left(
+                    \frac{3}{2} \cdot (n + j)
+                    + 1 - 3j
+                \right)
+            \right) + 2 \\
+        &= \sum_{j=1}^{n} \left(
+                (n-j) \cdot \left(
+                    \frac{3}{2} n
+                    - \frac{3}{2}j
+                    + 1
+                \right)
+            \right) + 2 \\
+        &= \sum_{j=1}^{n} \left(
+                \frac{3}{2} n^2
+                + \frac{3}{2} j^2
+                - 3 nj
+                + n
+                - j
+            \right) + 2 \\
+        &= \sum_{j=1}^{n} \left(
+                \frac{3}{2} n^2
+                + n
+            \right)
+            +
+            \frac{3}{2}
+            \sum_{j=1}^{n}
+                j^2
+            -
+            (3n + 1)
+            \sum_{j=1}^{n}
+                j
+            + 2 \\
+        &= n \left(
+                \frac{3}{2} n^2
+                + n
+            \right)
+            +
+            \frac{3n (n+1) (2n+1)}{12}
+            -
+            \frac{(3n + 1) (n-1)(n+1)}{2}
+            + 2 \\
+        &= \left(
+                \frac{3n^3}{2}
+                + n ^2
+            \right)
+            + \left(
+                \frac{n^3}{2} + \frac{3n^2}{4} + \frac{n}{4}
+            \right)
+            - \left(
+                \frac{3n^3}{2} + \frac{n^2}{2} + \frac{3n}{2} + \frac{1}{2}
+            \right)
+            + 2 \\
+        &= \frac{n^3}{2}
+            + \frac{5n^2}{4}
+            - \frac{5n}{4}
+            + \frac{3}{2}
+\end{align*}
 
-\subsubsection{Question 2}
-\begin{enumerate}
-    \item After determining T(n), setup an equation
-    \item Solve for c and n or show that values exist
-\end{enumerate}
+\subsection{Question (b)}
+\begin{align*}
+    T(n) &\geq cn^3 \hspace{2mm} \text{for} \hspace{1mm} n \geq n_0\\
+    T(n) = \frac{n^3}{2}
+    + \frac{5n^2}{4}
+    - \frac{5n}{4}
+    + \frac{3}{2}
+    &\geq cn^3 \\
+    T^{\prime}(n) = \frac{1}{2}
+    + \frac{5}{4n}
+    - \frac{5}{4n^2}
+    + \frac{3}{2n^3}
+    &\geq c \\
+    \lim_{n \to \inf} T^{\prime}(n) &= \frac{1}{2} \\
+    \therefore
+    T(n) &= O(n^3)
+\end{align*}
 
-\section{Question 3}
+\section{Problem 3}
 \subsection{Approach}
 \begin{enumerate}
     \item "Log time sounds like trees"
