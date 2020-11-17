@@ -220,15 +220,21 @@ Final organization of equations based on Big-O size.
 \end{align*}
 
 \section{Problem 3}
-\subsection{Approach}
-\begin{enumerate}
-    \item "Log time sounds like trees"
-    \item Could have a tree that holds central element
-    \item Smaller elements to left, Greater elements to right
-    \item Removing would cause bubble up
-    \item Adding would cause bubble down
-    \item May have to have null node in the case of even number of nodes: instead would take average of the two
-\end{enumerate}
+\subsection*{Structure}
 
+Use a \textbf{`mid'-heap} structure, where the median element is stored at the root.
+This structure holds for each subsequent sub-tree, with smaller values on the left and larger on the right.
+
+In the case where there is an even number of elements, the root node will be null.
+The $median()$ operation will then yield the two medians.
+
+This pasta data structure will also occupy $O(n)$ space.
+
+\subsection*{Runtimes}
+\begin{itemize}
+    \item The $insert(x)$ operation will take $O(\log n)$ time due to bubble down.
+    \item The $removeMedian()$ operation will take $O(\log n)$ time due to bubble up.
+    \item The $median()$ operation will take $O(1)$.
+\end{itemize}
 
 \end{document}
