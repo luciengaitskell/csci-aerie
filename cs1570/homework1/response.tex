@@ -226,15 +226,26 @@ Use a \textbf{`mid'-heap} structure, where the median element is stored at the r
 This structure holds for each subsequent sub-tree, with smaller values on the left and larger on the right.
 
 In the case where there is an even number of elements, the root node will be null.
-The $median()$ operation will then yield the two medians.
+The median operations will then yield the two medians.
+Therefore, there will be a value to keep track of the number of elements.
 
 This pasta data structure will also occupy $O(n)$ space.
 
 \subsection*{Runtimes}
 \begin{itemize}
-    \item The $insert(x)$ operation will take $O(\log n)$ time due to bubble down.
-    \item The $removeMedian()$ operation will take $O(\log n)$ time due to bubble up.
-    \item The $median()$ operation will take $O(1)$.
+    \item The $insert(x)$ operation will take $O(\log n)$ time due to downheap and maintain heap structure.
+        In an empty heap, the insert will create the first node.
+        If there are nodes, an insert will require a series of swaps at each level.
+        At each level, only one of the two edges is followed and therefore will only operate $O(\log n)$ times.
+        The node count value will be incremented.
+    \item The $removeMedian()$ operation removes either the root node, for odd node count, or both subsequent nodes for even counts.
+        This will take $O(\log n)$ time due to upheap, which is necessary to maintain the heap structure.
+        A series of swaps will be required to fill the hole(s) left by the removed node(s).
+        For each removed node, only one of the two edges is followed at each level and therefore will only operate $O(\log n)$ times.
+        The node count value will be decremented, either once or twice accordingly.
+    \item The $median()$ operation will take $O(1)$. If top node has a value, return its value.
+        If there is no top node value, then return the two values of subsequent nodes.
+        If there are no nodes, then return a null value.
 \end{itemize}
 
 \end{document}
