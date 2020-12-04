@@ -248,4 +248,60 @@ This pasta data structure will also occupy $O(n)$ space.
         If there are no nodes, then return a null value.
 \end{itemize}
 
+
+\section{Problem 4}
+\subsection{Part a}
+
+Use a Binary Search Tree to hold each person with their given position value.
+The nodes will be sorted by the position value in the line of each person.
+This will make it far more efficient when looking to find the subsequent person in line.
+
+\subsubsection{Operations}
+\begin{enumerate}
+    \item The $enter(p)$ operation will add an additional node to the BST.
+        In order to maintain structure, this will have a runtime of $O(log n)$,
+        as at each node only one side of the tree is followed to restructure.
+    \item The $exit(p)$ operation will remove a node from the BST.
+        In order to maintain structure, this will have a runtime of $O(log n)$,
+        as at each node only one side of the tree is followed to restructure.
+    \item The $throw(p)$ operation will take $O(log n)$ time.
+        This is because first the person at $p$ has to be found in the BST.
+        Then, finding the subsequent person can be done in constant time,
+        as they are just the next node to the right.
+\end{enumerate}
+
+This structure will occupy $O(n)$ space, as one node will be created for each person.
+
+\subsection{Part b}
+
+Use a Binary Search Tree similar to \emph{Part (a)}.
+However, the nodes will also maintain an extra value containing the maximum height in its subtree.
+This addition will make it far more efficient when looking to find the subsequent person in line of at least a specific height.
+
+\subsubsection{Operations}
+\begin{enumerate}
+    \item The $enter(p, h)$ operation will be nearly identical to above.
+        However, an additional step will be added at each traversed node,
+        to update the maximum height of each subtree, moving up and down the tree.
+        This is a constant time addition, and therefore will also have a runtime of $O(log n)$.
+    \item The $exit(p)$ operation will be nearly identical to above.
+        However, an additional step will be added at each traversed node,
+        to update the maximum height of each subtree, moving up and down the tree.
+        This is also a constant time addition, and therefore will have a runtime of $O(log n)$.
+    \item The $throw(p, t)$ operation will be similar to that above.
+        However, after finding finding the person who throws the tomato,
+        the search will have to traverse up and back down the tree.
+        The initial traverse up and to the right, will be to find the closest subtree
+        with a maximum hight $\geq t$.
+        Subsequently, the tree will then be traversed back down, initially trying the left
+        and subsequently right nodes, based on an acceptable max height value.
+        Once a leaf is found, or the children have max height values $< t$, then that person
+        is returned as the recipient of the tomato.
+        As these vertical traversals are done sequentially, and only along one edge of the BST,
+        the addition to runtime is $O(log n)$, which resolves overall to $O(log n)$.
+\end{enumerate}
+
+This structure is still a BST, with one extra value per node.
+As a result, the structure will still occupy $O(n)$ space, as only one node is needed for each person.
+
 \end{document}
