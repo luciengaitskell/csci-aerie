@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amssymb,latexsym,amsmath,epsfig,amsthm}
+\usepackage{enumitem}
 
 
 \title{Homework 1}
@@ -303,5 +304,23 @@ This addition will make it far more efficient when looking to find the subsequen
 
 This structure is still a BST, with one extra value per node.
 As a result, the structure will still occupy $O(n)$ space, as only one node is needed for each person.
+
+\section{Problem 5}
+
+\begin{enumerate}[label=\alph*.]
+    \item The historical score counts can be stored in a hash table.
+        Each element contains the $(i,j)$ pair and a count of how many historical games had that score.
+        Both $i$ and $j$ will be used by the hash function. The resulting value will then be used in conjunction
+        with a modulo to find the position in an array, making the hash table.
+        Therefore, populating the structure will take $O(n)$ time. Querying would run in constant time.
+    \item Both the hashing function and getting the element at the hash index in the array takes constant time.
+        Therefore adding, updating, and querying an entry in hash table will all take constant time.
+        While processing the data, these constant time operations will yield an overall $O(n)$ computation time.
+        A linked list can be used in each location of the array to deal with potential collisions.
+        However, if the hash function is sufficiently uniform and random, this is unlikely.
+        It is also important that the table should be of a size larger than the number of game score combinations.
+        During half-time, the query operation will hash the score and find the sum of games.
+        This will once again take constant time.
+\end{enumerate}
 
 \end{document}
