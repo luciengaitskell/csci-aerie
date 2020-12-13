@@ -275,7 +275,7 @@ This structure will occupy $O(n)$ space, as one node will be created for each pe
 
 \subsection{Part b}
 
-Use a Binary Search Tree similar to \emph{Part (a)}.
+Use a Balanced Binary Search Tree similar to \emph{Part (a)}.
 However, the nodes will also maintain an extra value containing the maximum height in its subtree.
 This addition will make it far more efficient when looking to find the subsequent person in line of at least a specific height.
 
@@ -298,11 +298,11 @@ This addition will make it far more efficient when looking to find the subsequen
         and subsequently right nodes, based on an acceptable max height value.
         Once a leaf is found, or the children have max height values $< t$, then that person
         is returned as the recipient of the tomato.
-        As these vertical traversals are done sequentially, and only along one edge of the BST,
+        As these vertical traversals are done sequentially, and only along one edge of the B-BST,
         the addition to runtime is $O(log n)$, which resolves overall to $O(log n)$.
 \end{enumerate}
 
-This structure is still a BST, with one extra value per node.
+This structure is still a B-BST, with one extra value per node.
 As a result, the structure will still occupy $O(n)$ space, as only one node is needed for each person.
 
 \section{Problem 5}
