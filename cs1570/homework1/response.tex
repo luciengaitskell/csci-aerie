@@ -3,6 +3,9 @@
 \usepackage{amsmath}
 \usepackage{amssymb,latexsym,amsmath,epsfig,amsthm}
 \usepackage{enumitem}
+\usepackage{ulem}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 
 
 \title{Homework 1}
@@ -321,6 +324,58 @@ As a result, the structure will still occupy $O(n)$ space, as only one node is n
         It is also important that the table should be of a size larger than the number of game score combinations.
         During half-time, the query operation will hash the score and find the sum of games.
         This will once again take constant time.
+\end{enumerate}
+
+\section{Problem 6}
+\begin{enumerate}[label=\alph*.]
+    \item The algorithm is written in psuedocode in \textbf{Algorithm \ref{mergesort3}}
+    \begin{algorithm}
+        \caption{Three-split merge sort}
+        \label{mergesort3}
+        \begin{algorithmic}[1] % The number tells where the line numbering should start
+            \Procedure{Merge}{$A,B,C$} \Comment{Merge three sorted arrays}
+                \State $final \gets []$ \Comment{Create empty array}
+                \While{$len(A)+len(B)+len(C)>0$}
+                    \If{$next(A)<next(B) \land next(A)<next(C)$}
+                        \State $value \gets pop(A)$ \Comment{$A$ has next smallest value}
+                    \ElsIf{$next(B)<next(A) \land next(B)<next(C)$}
+                        \State $value \gets pop(B)$
+                    \Else \Comment{must be equal or $next(C)<next(A) \land next(C)<next(B)$}
+                        \State $value \gets pop(C)$
+                    \EndIf
+
+                    % Continue HERE
+                    \State $append(final, value)$
+                \EndWhile
+            \EndProcedure
+            \item[]
+            \Procedure{Mergesort3}{$A$} \Comment{The sorted form of A}
+                \If{$len(A) > 0$} \Comment{Only continue if array has elements}
+                    \State $leftIndex \gets \lfloor\frac{len(A)}{3}\rfloor$
+                    \State $rightIndex \gets \lceil\frac{2 \cdot len(A)}{3}\rceil$
+                    \item[]
+                    \State $left \gets \Call{Split}{A, 0, leftIndex}$
+                    \State $middle \gets \Call{Split}{A, leftIndex, rightIndex}$
+                    \State $right \gets \Call{Split}{A, rightIndex, len(A)}$
+                    \item[]
+                    \State $left \gets \Call{Mergesort3}{left}$ \Comment{Operate on subarray}
+                    \State $middle \gets \Call{Mergesort3}{middle}$
+                    \State $right \gets \Call{Mergesort3}{right}$
+                    \State $sorted \gets \Call{Merge}{left, middle, right}$ \Comment{Merge sorted arrays}
+                    \item[]
+                    \State \textbf{return} $sorted$\Comment{The array is sorted}
+                \EndIf
+                \State \textbf{return} $A$\Comment{The empty array is sorted}
+            \EndProcedure
+        \end{algorithmic}
+    \end{algorithm}
+    \item The runtime of this new merge sort is $O(n\log_3 n)$ = $O(n\log n)$.
+        This is because the merge operation takes $O(n)$ time, operating $log_3 n$ times.
+        This is because each split operation divides each subarray into a third of the size.
+        Therefore, the recursion tree will be $\log_3 n$ in depth, with even splitting.
+    \item This algorithm is not faster than the standard merge sort algorithm,
+        as the runtime is the same order.
+        As the only difference is the log base, there is a constant factor between the original and new algorithm.
 \end{enumerate}
 
 \end{document}
