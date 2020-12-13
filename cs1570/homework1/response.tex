@@ -378,4 +378,41 @@ As a result, the structure will still occupy $O(n)$ space, as only one node is n
         As the only difference is the log base, there is a constant factor between the original and new algorithm.
 \end{enumerate}
 
+\section{Problem 7}
+
+\begin{enumerate}
+    \item In order to check all sums in $O(n^2)$ time, the simple operation is to iterate through every possible pairing.
+        This requires two for loops, which are nested, and each run from element $0$ to $n$.
+        Each possible element pair would be summed and checked for their value.
+        If the sum matches the target, then a counter is incremented. The value of the counter is returned once complete.
+
+    \item First sort the list of numbers. This will take $O(n\log n)$, using merge- or quicksort.
+        Then, create two pointers, one starting at the highest point and one at the lowest.
+        The two values at each pointers will be added and compared to the target.
+        If the target value is reached, then a counter will be incremented.
+        Next, the smaller pointer will move to the right by one and the comparison will occur once again.
+        This continues until the sum of the two values is greater than the target or the pointers cross.
+        Once this occurs, the larger pointer moves to the left by one.
+        These operations continue until the right pointer reaches the first element.
+        The sorting will take $O(n\log n)$, but happens in serial with the subsequent pointer operations.
+        The pointer search operations will be worst case $O(n^2)$, but is expected to be $O(n\log n)$.
+        Therefore the runtime will likely be $O(n\log n) + O(n\log n) = O(n\log n)$.
+
+    \item First, create a hash table, indexed by an integer, and containing a count that defaults to zero.
+        The set of values is iterated through for $a_i$ being the value of the element.
+        The value of $N-a_i$ is used to index the hash table, and then the counter is incremented.
+        This data processing takes $O(n)$ time, as each value in the set has to be operated,
+        but the hash table interaction is $O(1)$.
+        This is because the hash function is constant, along with the indexing.
+        
+        Next, the set is operated through again in $O(n)$ time. Each value $a_j$ is looked up in the table,
+        and the count in the hash table is added to an overall count beginning at $0$.
+        For each value $a_j$ is looked up in the table, the count will be given of how many $i$ that $N-a_i=a_j$.
+        This means the count will correspond to, $a_j=N-a_i \therefore a_j+a_i=N$, which is the goal of the algorithm.
+        It is important that if $A_j = \frac{N}{2} = A_i$, then the value in the hash table has to be subtracted by $1$ before adding to the overall sum counter, to avoid double counting.
+        
+        As the two set iterations occur serially, there is an overall $O(n) + O(n) = O(n)$ runtime.
+\end{enumerate}
+
+
 \end{document}
