@@ -16,4 +16,45 @@
 
 \maketitle
 
+\section{Problem 1}
+
+$S = [34,32,21,9,43,35,42,15,1,4,17,20,8,42,27]$
+
+\begin{itemize}
+    \item $\textproc{DeterministicSelect}(S, 8)$ \\
+    Baby sequences: $[[34,32,21,9,43],[35,42,15,1,4],[17,20,8,42,27]]$
+    Baby medians: $[32,15,20]$
+
+    \begin{itemize}
+        \item $\textproc{DeterministicSelect}([32, 15, 20],2)$ \\
+        Baby sequences: $[[32,15,20]]$ \\
+        Baby medians: $[20]$
+
+        \begin{itemize}
+            \item $\textproc{DeterministicSelect}([20],1)$ \\
+            return $20$
+
+        \end{itemize}
+        $x = 20 $ \\
+        $L = [15] $ \\
+        $E = [20] $ \\
+        $G = [32] $ \\
+        return $20$
+
+    \end{itemize}
+
+    $x = 20$ \\
+    $L = [1,4,8,9,15,17] $ \\
+    $E = [20] $ \\
+    $G = [34,32,21,43,35,42,42,27]$
+
+    \begin{itemize}
+        \item $\textproc{DeterministicSelect}([34,32,21,43,35,42,42,27],1)$ \\
+        return $34$
+    \end{itemize}
+
+    Returns: $34$
+\end{itemize}
+
+
 \end{document}
