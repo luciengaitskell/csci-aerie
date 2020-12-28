@@ -57,4 +57,57 @@ $S = [34,32,21,9,43,35,42,15,1,4,17,20,8,42,27]$
 \end{itemize}
 
 
+\section{Problem 2}
+
+\subsection{Part 1}
+
+Assume the day begins at $d_o$ and ends as $d_e$.
+
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{Counterexample:} Suppose workshop $1$, such that $s_1 = d_o$
+    and $t_1 = d_e$. Suppose there is another workshop ($2$) that starts a minute
+    after workshop $1$ and ends during workshop $1$. $\therefore s_2=s_1 + 1, t_2=x$
+    such that $s_1+1 < x < t_1$. Suppose another workshop $3$, such that 
+    $s_3 = x, t_3 = d_e$.
+
+    This greedy algorithm will select workshop $1$ due to the earlier starting time.
+    However, selecting workshop $1$ will cause workshop $2$ and $3$ to be removed.
+    Therefore, only one workshop will be selected to visit,
+    despite the opportunity to visit two during the day.
+
+    \item \textbf{Proof:} When selecting the next latest event, any overlaps are removed.
+    Therefore, If this other workshop which started earlier was kept, than the current
+    worshop could not be visited. In this case, it is safer to chose the later workshop,
+    as it can not cause any other conflicts. Therefore, this algorithm will give you the
+    most number of workshops able to visit.
+
+    \item \textbf{Counterexample:} Suppose three workshops:
+        \begin{enumerate}[label=\arabic*]
+            \item Length x
+            \item Length x+1
+            \item Length x+1
+        \end{enumerate}
+
+        Suppose workshop $2$ and $3$ immediately follow each other, and workshop $1$ overlaps both.
+        Workshop $1$ will be selected first, and others will be excluded.
+        However, selecting workshop $2$ and $3$ is the more optimal solution.
+\end{enumerate}
+
+\subsection{Part 2}
+
+\begin{enumerate}
+    \item Let $S$ be the list of stands
+    \item Let $V$ contain each visit
+    \item Calculate necessary trips, given stands $S$
+    \item Sort stands by open time in increasing order
+    \item Start with stands of smallest lengths open, and find all overlapping workshops
+        % THIS IS A BIT WOOLY
+    \item Combine all overlapping workshops into one visit, add to $V$ and remove from $S$
+    \item Continue until $S$ is empty
+    \item Return $V$
+\end{enumerate}
+
+This algorithm must return the optimal solution, as it prioritizes the least flexible stands.
+Each greedy step will not compromise any following step, as each subsequent stand is more flexible.
+
 \end{document}
