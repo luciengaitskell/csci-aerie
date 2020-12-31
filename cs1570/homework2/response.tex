@@ -6,6 +6,7 @@
 \usepackage{ulem}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{makecell}
 
 
 \title{Homework 2}
@@ -156,6 +157,72 @@ Each greedy step will not compromise any following step, as each subsequent stan
         and with a  radius always smaller than $5$. The optimal solution is a single station
         at the origin. However, the algorithm would only consider along the line, and would
         add multiple stations.
+\end{enumerate}
+
+\section{Problem 4}
+
+\begin{enumerate}
+    \item $T(i,j)$
+        \textbf{Base cases}:
+        \begin{enumerate}
+            \item if $i = 0 \therefore \text{return } j $ representing length of $Y[1..j]$
+            \item if $j = 0 \therefore \text{return } i $ representing length of $X[1..i]$
+        \end{enumerate}
+
+        if last characters match: $X[i] = Y[j] = A \therefore subcost = 0 \text{ else } subcost = 1$
+
+        \textbf{Recursive step} - return minimum of:
+        \begin{enumerate}
+            \item $T(i-1, j-1) + subcost$ (substitution, if necessary)
+            \item $T(i-1, j) + 1$ (delete from X)
+            \item $T(i, j-1) + 1$ (insertion as not in X)
+        \end{enumerate}
+    
+        The base cases are inherently true, as only insertions can occur for (a)
+        and deletions for (b).
+        Each recursive step represents the three possible operations for each sub-string,
+        as the values in the string can only be inserted, deleted, or substituted.
+        
+        Therefore, as each step and the base cases are true, the the algorithm holds.
+
+    \item \textbf{$T$ Table: }\\
+        \begin{tabular}{c||c|c|c|c|c|c|c|c|c|}
+            & \thead{0} & \thead{P\\1} & \thead{O\\2} & \thead{R\\3} & \thead{K\\4} & \thead{C\\5} & \thead{H\\6} & \thead{O\\7} & \thead{P\\8} \\
+            \hline
+            \hline
+            0   & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\
+            \hline
+            T 1 & 1 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\
+            \hline
+            O 2 & 2 & 2 & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
+            \hline
+            N 3 & 3 & 3 & 2 & 2 & 3 & 4 & 5 & 6 & 7 \\
+            \hline
+            K 4 & 4 & 4 & 3 & 3 & 2 & 3 & 4 & 5 & 6 \\
+            \hline
+            A 5 & 5 & 5 & 4 & 4 & 3 & 3 & 4 & 5 & 6 \\
+            \hline
+            T 6 & 6 & 6 & 5 & 5 & 4 & 4 & 4 & 5 & 6 \\
+            \hline
+            S 7 & 7 & 7 & 6 & 6 & 5 & 5 & 5 & 5 & 6 \\
+            \hline
+            U 8 & 8 & 8 & 7 & 7 & 6 & 6 & 6 & 6 & \textbf{6} \\
+            \hline
+        \end{tabular}
+
+        I first filled out the row along T/$1$ and column below P/$1$,
+        following the base cases where $i = 0$ and $j = 0$.
+        Subsequently, I computed the other cells starting at $i,j=(1,1)$,
+        requiring that the three relative cells to the top, top left, and left were also filled.
+        I propagated down each subsequent column and row until reaching $i,j=(8,8)$.
+    
+    
+    \item The issue will arise if the two strings are: \emph{ABCDE} and \emph{FGAHI}.
+        This is because the altered value will become an issue, as $T(1, 3) = 3$ and $\not= 2$
+        as a substition is taking place. However, the algorithm wll instead favor a deletion.
+        Otherwise, if $X[1]\not=Y[3]$, then the initializaton error would not cause an issue,
+        as deletion should be favored.
+
 \end{enumerate}
 
 \end{document}
