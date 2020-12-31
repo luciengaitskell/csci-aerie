@@ -110,4 +110,52 @@ Assume the day begins at $d_o$ and ends as $d_e$.
 This algorithm must return the optimal solution, as it prioritizes the least flexible stands.
 Each greedy step will not compromise any following step, as each subsequent stand is more flexible.
 
+\section{Problem 3}
+
+\begin{enumerate}[label=\alph*)]
+    \item There are only three possible groupings of staff members within 10 miles of each other.
+        It is important to note that two of these groups share a member.
+        Regardless, there will need to be three stations in a configuration such as:
+        \begin{enumerate}[label={Station \arabic*:}, leftmargin=*]
+            \item 5
+            \item 15
+            \item 30
+        \end{enumerate}
+    \item Process:
+        \begin{enumerate}[label=\arabic*:]
+            \item Sort N in increasing order
+            \item Pick next smallest staff member
+            \item Add all subsequent stations within 10 miles
+            \item Place station in middle of the group
+            \item Continue until all staff members processed.
+            \item \textbf{Return} set.
+        \end{enumerate}
+        
+        By first sorting the set, and then beginning from the smaller side,
+        the station must be $\geq x_1$ for $x_i$ the position of next smallest
+        distance staff $i$. Therefore, all the other staff within $10$ to the right
+        can share a station. This continues until all staff members are visited.
+        This must be the most efficient, as as a bare minimum, every staff member
+        requires a station, however can be grouped to save on overall count.
+
+        The runtime will be $O(n \log{n} + n) = O(n \log{n})$.
+        This is because a sort is first necessary ($O(n \log{n})$)
+        and then grouping the staff members subsequently
+        take a full iteration through the set ($O(n)$).
+
+    \item In this case, the staff members will still be sorted by distance along $\ell$.
+        The search will have to be performed until the next staff member
+        has $\Delta \ell > 10$. However, not all staff members within this range will be
+        grouped. A staff member will be in range if their
+        distance $d \leq \sqrt{(\Delta x-5)^2 + y^2}$.
+        The grouped staff members will be removed from $N$, and then the algorithm
+        will start again at the beginning of the remainin sorted set.
+        
+    \item Yes, this algorithm does depend on a linear arrangement of staff.
+        For example, if a all the staff are arranged on a spiral, beginning at an origin
+        and with a  radius always smaller than $5$. The optimal solution is a single station
+        at the origin. However, the algorithm would only consider along the line, and would
+        add multiple stations.
+\end{enumerate}
+
 \end{document}
