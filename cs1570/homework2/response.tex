@@ -225,4 +225,37 @@ Each greedy step will not compromise any following step, as each subsequent stan
 
 \end{enumerate}
 
+\section{Problem 5}
+
+\begin{enumerate}[label=\alph*.]
+    \item Algorithm \ref{marginalgo} given $S$ an array of words in the sentence
+
+    % Instead build backwards?
+    \begin{algorithm}
+        \caption{Three-split merge sort}
+        \label{marginalgo}
+        \begin{algorithmic}[1] % The number tells where the line numbering should start
+            \Procedure{Margin}{$S, m, l$} \Comment{Cost for sentence $S$ in margin size $m$ given existing line length $l$}
+                \If{$isempty(S)$}
+                    \State \textbf{return} 0
+                \EndIf
+                \item[]
+                \State $case1 \gets (len(L)-m)^2 + $ \Call{Margin}{$S[2...], m, 0$}
+                \Comment{Start new line. Cost is this line plus all subsequent.}
+                \item[]
+                \State $case2 \gets $ \Call{Margin}{$S[2...], m, (l+1+len(S[1]))$}
+                \Comment{Continue this line including cost of this word and space.}
+                \item[]
+                \State \textbf{return} $min(case1, case2)$
+            \EndProcedure
+        \end{algorithmic}
+    \end{algorithm}
+
+    \item This algorithm will attempt all possible combinations of newlines between words, selecting the minimum paths.
+        Therefore, this algorithm must be correct as it tries all combinations.
+    \item The runtime will be $O(2^n)$ for number of words $n$, as for each word calls the same function twice
+        on a slightly smaller set. Therefore, each word causes twice the subsequent operations to occur and corresponds
+        to a doubling of runtime for each word, hence the exponential.
+\end{enumerate}
+
 \end{document}
