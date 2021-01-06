@@ -332,6 +332,8 @@ As a result, the structure will still occupy $O(n)$ space, as only one node is n
     \begin{algorithm}
         \caption{Three-split merge sort}
         \label{mergesort3}
+        \hspace*{\algorithmicindent} \textbf{Input} \\
+        \hspace*{\algorithmicindent} \textbf{Output} 
         \begin{algorithmic}[1] % The number tells where the line numbering should start
             \Procedure{Merge}{$A,B,C$} \Comment{Merge three sorted arrays}
                 \State $final \gets []$ \Comment{Create empty array}
@@ -369,7 +371,7 @@ As a result, the structure will still occupy $O(n)$ space, as only one node is n
             \EndProcedure
         \end{algorithmic}
     \end{algorithm}
-    \item The runtime of this new merge sort is $O(n\log_3 n)$ = $O(n\log n)$.
+    \item The runtime of this new merge sort is $O(n\log_3 n) = O(n\frac{\log{n}}{\log{3}}) = (n\log{n})$.
         This is because the merge operation takes $O(n)$ time, operating $log_3 n$ times.
         This is because each split operation divides each subarray into a third of the size.
         Therefore, the recursion tree will be $\log_3 n$ in depth, with even splitting.
@@ -386,17 +388,22 @@ As a result, the structure will still occupy $O(n)$ space, as only one node is n
         Each possible element pair would be summed and checked for their value.
         If the sum matches the target, then a counter is incremented. The value of the counter is returned once complete.
 
-    \item First sort the list of numbers. This will take $O(n\log n)$, using merge- or quicksort.
-        Then, create two pointers, one starting at the highest point and one at the lowest.
+    % Note for future self: You should use more labels and names for things
+    %  such as P_1 and P_2 for pointers, and also 0...n to talk about indexes
+    \item First sort the list of numbers $A$. This will take $O(n\log n)$, using merge- or quicksort.
+        Then, create two pointers, $p_2$ starting at the highest index $n$ and $p_1$ at the lowest $1$.
         The two values at each pointers will be added and compared to the target.
-        If the target value is reached, then a counter will be incremented.
-        Next, the smaller pointer will move to the right by one and the comparison will occur once again.
+        If the target value $N$ is reached, then a counter will be incremented.
+        If $A[p_1]+A[p_2]<N$, then there are no numbers of index $p<p_1$ that would make $A[p]+A[p_2]=N$,
+        therefore $p_1$ is incremented.
+        If $A[p_1]+A[p_2]>N$, then there are no numbers of index $p>p_2$ that would make $A[p_1]+A[p]=N$,
+        therefore $p_2$ is decremented.
         This continues until the sum of the two values is greater than the target or the pointers cross.
-        Once this occurs, the larger pointer moves to the left by one.
-        These operations continue until the right pointer reaches the first element.
-        The sorting will take $O(n\log n)$, but happens in serial with the subsequent pointer operations.
-        The pointer search operations will be worst case $O(n^2)$, but is expected to be $O(n\log n)$.
-        Therefore the runtime will likely be $O(n\log n) + O(n\log n) = O(n\log n)$.
+        The sorting will take worst case $O(n^2)$ but is expected to be $O(n\log n)$,
+        and also happens in serial with the subsequent pointer operations.
+        The pointer search operations will take $O(n)$, as each element is visited once.
+
+        Therefore the runtime will likely be $O(n\log n) + O(n) = O(n\log n)$, as the $O(n\log n)$ dominates.
 
     \item First, create a hash table, indexed by an integer, and containing a count that defaults to zero.
         The set of values is iterated through for $a_i$ being the value of the element.
