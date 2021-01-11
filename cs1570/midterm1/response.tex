@@ -16,4 +16,61 @@
 
 \maketitle
 
+\section{Problem 1}
+
+\begin{enumerate}[label=(\alph*)]
+    \item The algorithm is written in psuedocode in \textbf{Algorithm \ref{differencealg}}
+    \begin{algorithm}
+        \caption{Maximum difference of $n \times n$ matrix }
+        \label{differencealg}
+        \begin{tabular}{r l}
+            \hspace*{\algorithmicindent} \textbf{Input}: & $A = n \times n$ table of numbers \\
+            \hspace*{\algorithmicindent} \textbf{Output}:& $d=$ maximum difference in $A$ \\
+                                                         %& $l=$ minimum value in $A[1..n-1, 1..n-1]$
+        \end{tabular}
+        
+        \begin{algorithmic}[1] % The number tells where the line numbering should start
+            \Function{Maximize}{$A$} \Comment{given $A$ and $n \times n$ matrix}
+                \If{$n == 1$} \Comment{base case}
+                    \State \Return $0, A[1,1]$
+                    \item[] \Comment{difference of element to itself and smallest value ($A[1,1]$)}
+                \EndIf
+                \item[]
+                
+                \State $d, l \gets \Call{Maximize}{A[1..n-1, 1..n-1]}$ \Comment{get data for sub-matrix}
+                \State $l_n \gets l$ \Comment{Create minimum value var for saving for return}
+
+                \item[]
+                \For{$i = 1\to n, j = n$ and $j = 1\to n-1, i = n$}
+                    \If{$A[i,j] < l_n$}
+                        \State $l_n \gets A[i,j]$ \Comment{Save new smallest value for subsequent step}
+                    \EndIf
+                    \item[]
+                    \State $d_{i,j} \gets A[i,j] - l$
+                    \If{$d_{i,j} > d$}
+                        \State $d \gets d_{i,j}$ \Comment{Save new maximum difference}
+                    \EndIf
+                \EndFor
+                \State \Return $d, l_n$ \Comment{maximum difference and mininum value}
+            \EndFunction
+            \item[]
+            \Function{DifferenceMaximize}{$A$} \Comment{The sorted form of A}
+                \State $d, l \gets \Call{Maximize}{A}$ \Comment{Run maximize function}
+                \State \Return $d$  \Comment{Return only desired value}
+            \EndFunction
+        \end{algorithmic}
+    \end{algorithm}
+
+    % This algo doesn't account for the possibility that optimal solution is A[i,j]-A[i, j-1]
+    %   possibly would need to make recursion at a finer resolution
+
+    \item Algorithm \ref{differencealg} visits every possible $A[i, j]$
+        and compares it's difference with the smallest $A[c,d]$ in the subarray $A[1..i, 1..j]$.
+        Therefore, this algorithm must give the optimal value of $A[i, j]-A[c, d]$.
+    \item As algorithm \ref{differencealg} visits every possible $A[i, j]$ only once,
+        it takes $O(n^2)$ time.
+        Although structured as a recursion, each parent step relys on data from the subsequent step
+        only computing for the missing new $A[i, j]$ on $A[1..n, 1..n]$ using existing data from $A[1..n-1, 1..n-1]$.
+\end{enumerate}
+
 \end{document}
