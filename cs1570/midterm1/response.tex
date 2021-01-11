@@ -38,20 +38,26 @@
                 \item[]
                 
                 \State $d, l \gets \Call{Maximize}{A[1..n-1, 1..n-1]}$ \Comment{get data for sub-matrix}
-                \State $l_n \gets l$ \Comment{Create minimum value var for saving for return}
+                \State $l_h \gets l$ \Comment{Create minimum value var for new vertical values}
+                \State $l_v \gets l$ \Comment{Create minimum value var for new horizontal values}
 
                 \item[]
-                \For{$i = 1\to n, j = n$ and $j = 1\to n-1, i = n$}
-                    \If{$A[i,j] < l_n$}
-                        \State $l_n \gets A[i,j]$ \Comment{Save new smallest value for subsequent step}
-                    \EndIf
-                    \item[]
-                    \State $d_{i,j} \gets A[i,j] - l$
-                    \If{$d_{i,j} > d$}
-                        \State $d \gets d_{i,j}$ \Comment{Save new maximum difference}
-                    \EndIf
+
+                \For{$i = 1\to n, j = n-1$} \Comment{Horizontal operations}
+                    \State $l_h \gets min(A[i,j], l_h)$ \Comment{Save smallest value for horizontal}
+                    \State $d \gets max(A[i,j] - l_h, d)$ \Comment{Save maximum difference}
                 \EndFor
-                \State \Return $d, l_n$ \Comment{maximum difference and mininum value}
+                \item[]
+                \For{$j = 1\to n-1, i = n$} \Comment{Vertical operations}
+                    \State $l_v \gets min(A[i,j], l_v)$ \Comment{Save smallest value for vertical}
+                    \State $d \gets max(A[i,j] - l_v, d)$ \Comment{Save maximum difference}
+                \EndFor
+
+                \item[]
+                \State $l \gets min(l_v, l_h, A[n,n])$ \Comment{Save smallest value for for corner $(n,n)$}
+                \State $d \gets max(A[n,n] - l, d)$ \Comment{Save maximum difference}
+
+                \State \Return $d, l$ \Comment{maximum difference and mininum value}
             \EndFunction
             \item[]
             \Function{DifferenceMaximize}{$A$} \Comment{The sorted form of A}
