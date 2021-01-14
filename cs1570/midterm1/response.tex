@@ -152,4 +152,84 @@
     Therefore the runtime is $O(n) + O(n) = O(n)$.
 \end{enumerate}
 
+\section{Problem 3}
+\begin{enumerate}[label=(\alph*)]
+    \item The algorithm is written in psuedocode in \textbf{Algorithm \ref{hotelalg}}
+    \begin{algorithm}
+        \caption{Optimal hotel path for Bilbo}
+        \label{hotelalg}
+
+        \begin{tabular}{r l}
+            \hspace*{\algorithmicindent} \textbf{Inputs}:    & $D[1..n] = n$ length array of distances to next hotel. \\
+                                                            & $R[1..n] = n$ length array of ranges from each hotel \\
+                                                            & ($D[n] = R[n] = \varnothing$ represents the end) \\
+            \hspace*{\algorithmicindent} \textbf{Output}:   & $P[1..m] = m$ length array of the path containing \\
+                                                            & each hotel index from A in the path \\
+        \end{tabular}
+
+        \begin{algorithmic}[1]
+            \Function{HotelPath}{$D[1..n], R[1..n]$}
+                \State $i_c = 1$            \Comment{Set current hotel index to first}
+                \State $P \gets [i_c]$ \Comment{Create path starting at current hotel}
+                \item[]
+                \While{$i_c < n$}           \Comment{Continue until at end of journey}
+                    \If{$D[i_c] > R[i_c]$}        \Comment{Path impossible if next hotel exceeds range}
+                        \State \Return $\varnothing$
+                    \Else                   \Comment{Default choosing subsequent hotel}
+                        \State $i_{next} \gets i_c + 1]$
+                        \State $t_{next} \gets D[i_c] + D[i_{next}]$    \Comment{Total range from hotel $i_c$}
+                        \State $d_t \gets D[i_c] + D[i_{next}]$     \Comment{Distance counter}
+                    \EndIf
+                    \item[]
+                    \State $i_s = i_c+2$    \Comment{Select next available hotel}
+                    \While{$R[i_c] \geq d_t$ and $i_s \leq n$}  \Comment{Operate until past list or range}
+                        \If{$R[i_s]==D[i_s]==\varnothing$}      \Comment{If possible, go to end}
+                            \State $i_{next} = i_s$
+                            \State $t_{next} = t_s$
+                        \Else   \Comment{Select new hotel and test cumulative range}
+                            \State $t_s \gets d_t + R[i_s]$
+                            \If{$t_{next} < t_s$}   \Comment{Save if cumulative range is larger}
+                                \State $i_{next} = i_s$
+                                \State $t_{next} = t_s$
+                            \EndIf
+                        \EndIf
+                        \item[]
+                        \State $i_s \gets i_s + 1$  \Comment{Select next hotel to test}
+                    \EndWhile
+                    \item[]
+                    \State $P \gets P + i_{next}$   \Comment{Save next hotel to path}
+                    \State $i_c = i_{next}$         \Comment{Set current hotel to prior next hotel}
+                \EndWhile
+                \item[]
+                \State \Return $P$  \Comment{Greedily selected optimal path}
+            \EndFunction
+        \end{algorithmic}
+    \end{algorithm}
+
+    \item The optimal solution to the problem will visit the fewest hotels,
+        and therefore allow Bilbo to make his journey in the least time.
+        This is a great use case for a greedy algorithm.
+        Given a starting hotel $h_a$, there is a set of hotels $A$
+        within range of $h_a$. Each hotel $h_i$ in $A$ has a distance from
+        $h_a$ of $d_i$. The range from $h_i$ is $r_i$. The maximum potential
+        range of $h_i$ is $t_i = d_i + r_i$.
+
+        Repeatidly selecting the hotel $h_o$ with the maximum $t_o$ will allow
+        Bilbo to travel the most distance every day.
+        Therefore, on average, Bilbo will travel farther per day and will
+        take an optimal path.
+
+        The algorithm will return a null path if at one point no subsequent
+        hotel could be reached. In this case the path is impossible.
+
+    \item The algorithm operates using two loops. However, the outer
+        loop only iterates once for every hotel $h \in P$,
+        given $P$ the set of selected hotels in Bilbos path.
+        The inner loop iterates once for every hotel $h \notin P$.
+        All other operations within the loops take constant $O(1)$ time.
+        These two sets encompasses the set of all hotels
+        $H = (h \in P) \cup (h \notin P)$, of length $n$.
+        Therefore the runtime is $O(n) \cdot O(1) = O(n)$.
+\end{enumerate}
+
 \end{document}
