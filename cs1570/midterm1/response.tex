@@ -3,7 +3,6 @@
 \usepackage{amsmath}
 \usepackage{amssymb,latexsym,amsmath,epsfig,amsthm}
 \usepackage{enumitem}
-\usepackage{ulem}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 
@@ -77,6 +76,80 @@
         it takes $O(n^2)$ time.
         Although structured as a recursion, each parent step relys on data from the subsequent step
         only computing for the missing new $A[i, j]$ on $A[1..n, 1..n]$ using existing data from $A[1..n-1, 1..n-1]$.
+\end{enumerate}
+
+\section{Problem 2}
+
+\begin{enumerate}[label=(\alph*)]
+    \item The algorithm is written in psuedocode in \textbf{Algorithm \ref{majorityalg}}
+    \begin{algorithm}
+        \caption{Majority element in an array}
+        \label{majorityalg}
+
+        \begin{tabular}{r l}
+            \hspace*{\algorithmicindent} \textbf{Input}:  & $A[1..n] = n$ length array of non-ordered elements \\
+            \hspace*{\algorithmicindent} \textbf{Output}: & $d=$ majority element value in $A$ or $\varnothing$ if none \\
+        \end{tabular}
+
+        \begin{algorithmic}[1]
+            \Function{MajorityValue}{$A$} \Comment{$A$ an array of length $n$}
+                \If{$n==0$}
+                    \State \Return $\varnothing$
+                \EndIf
+                \If{$n==1$}
+                    \State \Return $A[1]$
+                \EndIf
+                \item[]
+                \State $v \gets A[1]$ \Comment{Selected value from array}
+                \State $c \gets 0$ \Comment{Counter for local occurrence of $v$}
+                \item[]
+                \For{$v_i$ in $A[2..n]$}
+                    \If{$v_i = v$} \Comment{Iterate counter if values match}
+                        \State $c \gets c+1$
+                    \Else
+                        \If{$c > 0$} \Comment{If multiple prior occurrences only decrement}
+                            \State $c \gets c-1$
+                        \Else \Comment{$c=0, set new value$}
+                            \State $v=v_i$
+                        \EndIf
+                    \EndIf
+                \EndFor
+                \item[]
+                \State $c_g \gets 0$ \Comment{Counter for global occurrences of $v$}
+                \For{$v_i$ in $A[1..n]$}
+                    \If{$v=v_i$}
+                        \State $c_g \gets c_g + 1$
+                    \EndIf
+                \EndFor
+                \item[]
+                \If{$c_g > \lfloor n/2 \rfloor$} \Comment{Return if element is majority}
+                    \State \Return $v$
+                \Else \Comment{There is no majority}
+                    \State \Return $\varnothing$
+                \EndIf
+            \EndFunction
+        \end{algorithmic}
+    \end{algorithm}
+
+    \item \textbf{Proof:}
+    \begin{itemize}
+        \item Case 1: \emph{$A$ has no majority}\\
+        Therefore, regardless of $v$, the selected value, the global occurrences count
+        from the second loop will never exceed $\lfloor n/2 \rfloor$, by the definition
+        of majority element.
+
+        \item Case 2: \emph{$A$ has a majority} \\
+        Given each value $a_i$ of $u$ unique elements in $A$, there are corresponding occurrence
+        counts of $c_i$. Let the majority element value be $a_m$ and count be $c_m$.
+        Therefore, $c_m > \sum_{i=1}^{m} c_i + \sum_{i=m}^{u} c_i$. \\
+        In the worst case, $c_m = \lfloor n/2 \rfloor +1$, and each occurrence is interleaved
+        between all other elements, elements of value $a_m$ must start and finish the array.
+        Therefore, the algorithm will return $a_m$, correctly.        
+    \end{itemize}
+
+    \item \textbf{Algorithm \ref{majorityalg}} operates over the full length $n$ of $A$ twice, serially.
+    Each operation within the loops take $O(1)$ constant time.
+    Therefore the runtime is $O(n) + O(n) = O(n)$.
 \end{enumerate}
 
 \end{document}
