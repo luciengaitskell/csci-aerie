@@ -232,4 +232,335 @@
         Therefore the runtime is $O(n) \cdot O(1) = O(n)$.
 \end{enumerate}
 
+\pagebreak
+
+\section{Problem 4}
+
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{Data structures:}
+    \begin{enumerate}[label=(\arabic*)]
+        \item \textbf{Frequent Fliers} are organized using a balanced search tree.
+        The nodes in the tree are organized by the unique flier ID,
+        with smaller IDs on the left and larger on the right.
+        The node contains the flier ID and their frequent flier status.
+
+        \textbf{Let this structure be named $P$.}
+
+        \item \textbf{Flights} are organized using a balanced search tree.
+        The nodes in the tree are organized by the unique flight ID,
+        with smaller IDs on the left and larger on the right.
+        The node contains the flight ID and a reference to an associated
+        flight specific upgrade structures in point \ref{flightupgrade}.
+
+        \textbf{Let this structure be named $F$.}
+
+        \item \textbf{Flight Specific Upgrades} \label{flightupgrade} are organized
+        using a heap priority queue.
+        Each node represents a flier with an upgrade on the flight represented
+        by the containing priority queue.
+        Each node will also contain the date of submission of the upgrade request
+        and references to the parent and both children nodes.
+        The priority of each flier node is based on their frequent flier status,
+        or time since request if a tie-break is necessary.
+        
+        There will also be a second structure associated with each flight:
+        a balanced search tree containing each flier with an upgrade.
+        The nodes will be sorted by the flier ID, and each will contain a reference
+        to the associated flier node in the priority queue structure.
+
+        \textbf{Let the priority structure be named $U_i$ for $i$ the flight ID (upgrades).}
+        \textbf{Let the flier ID structure be named $W_i$ for $i$ the flight ID (waitlist).}
+    \end{enumerate}
+
+    \item The operations for \emph{Priority}, \emph{Upgrade request},
+    \emph{Upgrade cancellation}, \emph{Priority update}, and \emph{Upgrade processing}
+    are written in psuedocode in \textbf{Algorithms
+    \ref{upgraderequest}, \ref{upgradecancel}, \ref{priorityupdate}, \ref{upgradeprocessing}}
+    with helper functions in \textbf{Algorithm \ref{flierhelper}}.
+
+    \begin{algorithm}
+        \caption{Frequent flier helper operations}
+        \label{flierhelper}
+
+        \begin{algorithmic}[1]
+            \Function{FlierStatus}{$x$}    \Comment{Get frequent flier status of flier $x$}
+                \State $n \gets $ root node of $P$.
+                \While{$n.key \not= x$} \Comment{Traverse tree until node is found}
+                    \If{$x < n.key$}
+                        \State $n = n.left$
+                    \Else
+                        \State $n = n.right$
+                    \EndIf
+                \EndWhile
+                %\item[]
+                \State \Return $n.status$   \Comment{Return selected flier status}
+            \EndFunction
+            \item[]\item[]
+            \Function{FlierUpgradePriority}{$u_1, u_2$}
+                \item[]\Comment{Determine if flier upgrade $u_1$ is higher priority than $u_2$}
+                \State $s_1, t_1 \gets u_1$ \Comment{Unpack flier status and upgrade date}
+                \State $s_2, t_2 \gets u_2$
+                \item[]
+                \If{$s_1 > s_2$}    \Comment{If flier $1$ has a higher status}
+                    \State \Return $True$
+                \ElsIf{$s_1 = s_2$}
+                    \If{$t_1 < t_2$}    \Comment{If upgrade $1$ is older}
+                        \State \Return $True$
+                    \Else
+                        \State \Return $False$
+                    \EndIf
+                \Else
+                    \State \Return $False$
+                \EndIf
+            \EndFunction
+            \item[]\item[]
+            \Function{FlightQueue}{$f$} \Comment{Get upgrade queue of flight $f$}
+                \State $n \gets $ root node of $F$.
+                \While{$n.key \not= f$} \Comment{Traverse tree until node is found}
+                    \If{$f < n.key$}
+                        \State $n = n.left$
+                    \Else
+                        \State $n = n.right$
+                    \EndIf
+                \EndWhile
+                \item[] \Comment{update priority structure and flier ID structure}
+                \State \Return $(n.upgrades, n.waitlist)$
+            \EndFunction
+        \end{algorithmic}
+    \end{algorithm}
+
+    \begin{algorithm}
+        \caption{Upgrade request}
+        \label{upgraderequest}
+
+        \begin{algorithmic}[1]
+            \Function{UpgradeRequest}{$x, f$}   \Comment{Flier $x$ upgrade request on flight $f$}
+                \State $s_x \gets \Call{FlierStatus}{x}$
+                \State $t_x \gets$ current time
+                \State $U_f, W_f \gets \Call{FlightQueue}{f}$
+                \item[] \Comment{Add flier to end of priority queue}
+                \State $n_{depth} \gets \lfloor\log_2{|U_f|}\rfloor$
+                \State $n_{horiz} \gets |U_f|-2^{n_{depth}} + 1$
+                \State $n \gets $ new node at depth $n_{depth}$ and horizontal $n_{horiz}$
+                \State $n.priority = (s_x, t_x)$
+                \State $n.flierID = x$
+                \item[] \Comment{Restore heap}
+                \While{$n$ is not root and $\Call{FlierUpgradePriority}{(s_x, t_x), n.parent}$}
+                    \item[]\Comment{Traverse up tree until in a correct spot for priority}
+                    \State $n_s \gets n.parent$
+                    \State Replace parent node with $n$.
+                    \State Replace original position of $n$ with $n_s$.
+                \EndWhile
+                \item[]
+                \State $w \gets $ root node of $W_f$.
+                \While{$w$ is not a insertion node} \Comment{Traverse tree until open spot}
+                    \If{$x < w.key$}
+                        \State $w = w.left$
+                    \Else
+                        \State $w = w.right$
+                    \EndIf
+                \EndWhile
+                \item[]
+                \State create a node at $w$
+                \State $w.key = x$
+                \State $w.ref = n$
+
+            \EndFunction
+        \end{algorithmic}
+
+    \end{algorithm}
+
+    \begin{algorithm}
+        \caption{Upgrade cancel}
+        \label{upgradecancel}
+        \begin{algorithmic}[1]
+            \Function{UpgradeCancel}{$x, f$}  \Comment{Flier $x$ upgrade cancel on flight $f$}
+                \State $U_f, W_f \gets \Call{FlightQueue}{f}$
+                \item[]
+                \State $n \gets $ root node of $W_f$.
+                \While{$n.key \not= x$} \Comment{Traverse tree until node is found}
+                    \If{$f < n.key$}
+                        \State $n = n.left$
+                    \Else
+                        \State $n = n.right$
+                    \EndIf
+                \EndWhile
+                \State $x_{ref} = n.ref$
+                \item[] \Comment{Delete node and restore tree shape}
+                \State Traverse down tree until reaching a external node $w$ such that
+                $w.key > w.left$ and $w.key > w.right$.  % this is kinda wack
+                \State Swap node $w$ in place of $n$
+                \item[] \Comment{Remove and adjust heap}
+                \State Swap last node $u$ in sub-heap under $x_{ref}$ into the place of $x_{ref}$.
+                \While{$u$ has a child of higher priority}
+                    \State Swap $u$ with that child.
+                \EndWhile
+            \EndFunction
+        \end{algorithmic}
+    \end{algorithm}
+    \begin{algorithm}
+        \caption{Priority Update}
+        \label{priorityupdate}
+        \begin{algorithmic}[1]
+            \Function{PriorityUpdate}{$x, f$} \Comment{Flier $x$ update request on flight $f$}
+                \State $s_x \gets \Call{FlierStatus}{x}$
+                
+                \State $U_f, W_f \gets \Call{FlightQueue}{f}$
+                \item[]
+                \State $n \gets $ root node of $W_f$.
+                \While{$n.key \not= x$} \Comment{Traverse tree until node is found}
+                    \If{$f < n.key$}
+                        \State $n = n.left$
+                    \Else
+                        \State $n = n.right$
+                    \EndIf
+                \EndWhile
+                \State $x_{ref} = n.ref$    \Comment{Reference to flier node in priority queue}
+                \State $t_x \gets n_{ref}.time$
+                \item[]
+                \State $x_{ref}.priority = (x_{ref}, time)$
+
+                \While{$x_{ref} \not =$ root and $\Call{FlierUpgradePriority}{x_{ref}, x_{ref}.parent}$}
+                    \item[]\Comment{Traverse up tree until in a correct spot for priority}
+                    \State $n_s \gets n.parent$
+                    \State Replace parent node with $n$.
+                    \State Replace original position of $n$ with $n_s$.
+                \EndWhile
+
+                \State Ensure $n.ref$ points to the new location in the priority queue.
+            \EndFunction
+        \end{algorithmic}
+
+    \end{algorithm}
+    \begin{algorithm}
+        \caption{Upgrade Processing}
+        \label{upgradeprocessing}
+        \begin{algorithmic}[1]
+            \Function{UpgradeProcessing}{$f, k$}  \Comment{Flight $f$ upgrade given $k$ seats}
+                \State $U_f, W_f \gets \Call{FlightQueue}{f}$
+                \State $S \gets $ empty array of length $k$ \Comment{Selected users array}
+                \For{$i$ from $1$ to $k$}
+                    \State Append root node of $U_f$ to $S$
+                    \item[]
+                    \State Replace root node with last node $w$ in $U_f$
+                    \While{$w.priority$ is not greater than both children}
+                        \State Swap $w$ with a child that has a greater priority than $w$
+                    \EndWhile
+                \EndFor
+                \item[]
+                \State \Return $S$
+            \EndFunction
+        \end{algorithmic}
+
+    \end{algorithm}
+
+    \pagebreak
+    \item \textbf{Data structures:}
+    \begin{enumerate}[label=(\arabic*)]
+        \item \textbf{Frequent Fliers ($P$)} \\
+        One node is created for each flier. Therefore there will be $m$ nodes,
+        for the $m$ frequent fliers. This yields a $O(m)$ space complexity.
+
+        \item \textbf{Flights ($F$)} \\
+        One node is create for each flight. Therefore there will be $n$ nodes,
+        for the $n$ flights. This yields a $O(n)$ space complexity.
+
+        \item \textbf{Flight Specific Upgrades ($U_i, W_i$)} \\
+        One nodes will be created in both structures for each frequent flier
+        per flight. Therefore there will be $2 n_f$ nodes for each flight $f$.
+        In total there will be $O(\sum_{f\in F}{2*n_f})$
+        Therefore, the structures will have $O(\sum_{f\in F}{n_f})$ space complexity.
+    \end{enumerate}
+
+    \textbf{Correctness:}
+    \begin{enumerate}[label=(\arabic*)]
+        \item \emph{Priority} - \Call{FlierUpgradePriority}{} \\
+            Comparing priority of two known upgrade requests take $O(1)$ time,
+            as only simple contant time comparisons are performed
+
+        \item \emph{Upgrade request} - \Call{UpgradeRequest}{} \\
+            First the flier status has to be determined.
+            All the flights are structured in a binary search tree
+            and therefore finding a specific flier takes $O(\log m)$
+
+            The upgrade request next searches through the flights by ID
+            to get the flight's queue. As the flights are structured in a
+            binary search tree, this takes $O(\log n)$.
+
+            Creating a new node in the priority queue takes $O(\log{height} = \log{n_f})$
+            as the full hight has to be traversed.
+            Next, restoring the heap will also take a maximum of $O(\log{n_f})$
+            as the operation only goes up the tree.
+
+            Finally, the flier ID has to be added to the flier ID
+            sorted flight waitlist. The insert operation only operates
+            down the tree and therefore takes $O(\log{height} = \log{n_f})$ time.
+
+            Therefore in total the operation is a time complexity of: \\
+            $O(\log m) + O(\log n) + O(\log{n_f}) + O(\log{n_f}) + O(\log{n_f})$ \\
+            $=O(\log m + \log n + \log{n_f})$
+
+        \item \emph{Upgrade cancellation} - \Call{UpgradeCancelz}{} \\
+            Similar to \emph{Upgrade Request}, the flight has to be
+            looked up by ID: $O(\log n)$.
+            
+            A particular flier in the upgrade waitlist has to be found,
+            and has to be found in the binary search tree.
+            This operations takes $O(\log n_f)$ time complexity.
+
+            Subsequently, this node in the waitlist is removed,
+            and the binary search tree has to be restored.
+            This operation only runs up the tree and therefore runs in
+            $O(\log n_f)$ time.
+
+            The referenced node in the priority queue also has to be removed.
+            The operation to restore the structure of the heap, only runs
+            up the tree and therefore will take $O(\log n_f)$ time.
+            
+            Therefore the operation will be performed in: \\
+            $O(\log n) + O(\log n_f) + O(\log n_f) + O(\log n_f)$ \\
+            $=O(\log n + \log n_f)$
+
+        \item \emph{Priority update} - \Call{PriorityUpdate}{} \\
+            First the flier status has to be determined.
+            This is still $O(\log m)$ time complexity.
+            
+            The flight also has to be looked up by ID: $O(\log n)$.
+
+            A particular flier in the upgrade waitlist has to be found:
+            $O(\log n_f)$
+
+            The referenced node in the priority queue is then moved
+            only up the tree until the correct spot is found.
+            Therefore this operation runs in
+            $O(\log height) = O(\log n_f)$ time.
+
+            In total these operations take: \\
+            $O(\log m) + O(\log n) + O(\log n_f) + O(\log n_f)$ \\
+            = $O(\log m + \log n + \log n_f)$
+
+        \item \emph{Upgrade processing}
+            The flight has to be looked up by ID: $O(\log n)$.
+
+            For the $k$ fliers to be upgraded,
+            the top node is first removed representing the next
+            flier to be upgraded. The top node is the top priority
+            flier by the properties of a priority queue heap.
+            Next, the heap has to be restored:
+
+            First, the last node is swapped to the top,
+            which takes $O(\log n_f)$ to reach as the node is at
+            the bottom of the heap. 
+            Next, the new top node is swapped only down the heap until
+            it satisfies the heap rules, therefore taking $O(\log n_f)$
+            These two operations occur $k$ times for each upgraded flier.
+
+            In total these operations take: \\
+            $O(\log n) + k\cdot (O(\log n_f) + O(\log n_f))$ \\
+            $= O(\log n + k\log n_f)$
+
+    \end{enumerate}
+
+\end{enumerate}
+
 \end{document}
