@@ -201,33 +201,56 @@ It is proved by induction... \\
             \item 30
         \end{enumerate}
     \item Process:
-        \begin{enumerate}[label=\arabic*:]
-            \item Sort N in increasing order
-            \item Pick next smallest staff member
-            \item Add all subsequent stations within 10 miles
-            \item Place station in middle of the group
-            \item Continue until all staff members processed.
-            \item \textbf{Return} set.
-        \end{enumerate}
+        The pseudocode is documented in \textbf{Algorithm \ref{wifialgo}}
+        \begin{algorithm}
+            \caption{WiFi towers}
+            \label{wifialgo}
+            \begin{algorithmic}[1]
+                \Function{WiFiTowers}{$N$}  \Comment{given $N$ the location of customers}
+                    \State Let $T$ be the an empty set of towers
+                    \item[]
+                    \State Let $N_{sorted}$ be $N$ in increasing distance along $l$
+                    \For{$c_i$ in $N_{sorted}$}
+                        \State Remove $c_i$ from $N_{sorted}$
+                        \State Let $p_i$ be the position along $l$ of $c_i$
+                        \item[]
+                        \State Create new tower $t_i$ of position $p_i + d/2$
+                        \State Add new tower $t_i$ to $T$
+                        \item[]
+                        \For{$c_j$ in $N_{sorted}$}
+                            \If{$c_j$ overlaps with $t_i$}
+                                \State Remove $c_j$ from $N_{sorted}$
+                            \Else
+                                \State Break from inner loop
+                            \EndIf
+                        \EndFor
+                    \EndFor
+                \EndFunction
+            \end{algorithmic}
+        \end{algorithm}
         
         By first sorting the set, and then beginning from the smaller side,
         the station must be $\geq x_1$ for $x_i$ the position of next smallest
-        distance staff $i$. Therefore, all the other staff within $10$ to the right
-        can share a station. This continues until all staff members are visited.
+        distance staff $i$.
+        Therefore, all the other customers within $d$ to the right can share a station.
+        In subsequent iterations, all customers to the left have already been
+        handled by a tower, and therefore no longer need to be considered.
+        This continues until all customers members are visited.
         This must be the most efficient, as as a bare minimum, every staff member
         requires a station, however can be grouped to save on overall count.
 
         The runtime will be $O(n \log{n} + n) = O(n \log{n})$.
-        This is because a sort is first necessary ($O(n \log{n})$)
-        and then grouping the staff members subsequently
-        take a full iteration through the set ($O(n)$).
+        This is because a sort is first necessary ($O(n \log{n})$).
+        Subsequently, the $n$ customers are grouped.
+        As each customer is visited only once, the loop takes $O(n)$ time.
 
-    \item In this case, the staff members will still be sorted by distance along $\ell$.
-        The search will have to be performed until the next staff member
-        has $\Delta \ell > 10$. However, not all staff members within this range will be
-        grouped. A staff member will be in range if their
-        distance $d \leq \sqrt{(\Delta x-5)^2 + y^2}$.
-        The grouped staff members will be removed from $N$, and then the algorithm
+    \item In this case, the consumers will still be sorted by distance along $\ell$.
+        The search will have to be performed until the next consumer
+        has $\Delta \ell > d$.
+        However, not all consumers within this range will be grouped.
+        A consumer will be in range and will be grouped if their distance
+        $d \leq \sqrt{(\Delta x- \frac{d}{2})^2 + y^2}$.
+        The grouped consumers will be removed from $N$, and then the algorithm
         will start again at the beginning of the remainin sorted set.
         
     \item Yes, this algorithm does depend on a linear arrangement of staff.
@@ -237,6 +260,7 @@ It is proved by induction... \\
         add multiple stations.
 \end{enumerate}
 
+\pagebreak
 \section{Problem 4}
 
 \begin{enumerate}
