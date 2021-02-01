@@ -23,7 +23,7 @@ $S = [34,32,21,9,43,35,42,15,1,4,17,20,8,42,27]$
 
 \begin{itemize}
     \item $\textproc{DeterministicSelect}(S, 8)$ \\
-    Baby sequences: $[[34,32,21,9,43],[35,42,15,1,4],[17,20,8,42,27]]$
+    Baby sequences: $[[34,32,21,9,43],[35,42,15,1,4],[17,20,8,42,27]]$ \\
     Baby medians: $[32,15,20]$
 
     \begin{itemize}
@@ -45,19 +45,65 @@ $S = [34,32,21,9,43,35,42,15,1,4,17,20,8,42,27]$
     \end{itemize}
 
     $x = 20$ \\
-    $L = [1,4,8,9,15,17] $ \\
-    $E = [20] $ \\
+    $L = [1,4,8,9,15,17]$ \\
+    $E = [20]$ \\
     $G = [34,32,21,43,35,42,42,27]$
 
     \begin{itemize}
         \item $\textproc{DeterministicSelect}([34,32,21,43,35,42,42,27],1)$ \\
-        return $34$
+        Baby sequences: $[[34,32,21,43,35],[32,42,42,27]]$ \\
+        Baby median: $[34, 42]$
+        \begin{itemize}
+            \item $\textproc{DeterministicSelect}([34, 42],1)$ \\
+            Baby sequences: $[[34, 42]]$ \\
+            Baby medians: $[34]$
+            \begin{itemize}
+                \item $\textproc{DeterministicSelect}([34],1)$ \\
+                return $34$
+            \end{itemize}
+            
+            $x = 34$ \\
+            $L = []$ \\
+            $E = [34]$ \\
+            $G = [42]$
+            
+            return $34$
+        \end{itemize}
+
+        $x = 34$ \\
+        $L = [21, 32, 27]$ \\
+        $E = [34]$ \\
+        $G = [43, 35, 42, 42]$
+
+        \begin{itemize}
+            \item $\textproc{DeterministicSelect}([21, 32, 27],1)$ \\
+            Baby sequences: $[[21, 32, 27]]$ \\
+            Baby medians: $[27]$
+            \begin{itemize}
+                \item $\textproc{DeterministicSelect}([27],1)$ \\
+                return $27$
+            \end{itemize}
+
+            $x = 27$ \\
+            $L = [21]$ \\
+            $E = [27]$ \\
+            $G = [32]$
+
+            \begin{itemize}
+                \item $\textproc{DeterministicSelect}([21], 1)$ \\
+                return $21$
+            \end{itemize}
+            return $21$           
+        \end{itemize}
+        
+        return $21$
     \end{itemize}
 
-    Returns: $34$
+    return $21$
 \end{itemize}
 
 
+\pagebreak
 \section{Problem 2}
 
 \subsection{Part 1}
@@ -65,7 +111,9 @@ $S = [34,32,21,9,43,35,42,15,1,4,17,20,8,42,27]$
 Assume the day begins at $d_o$ and ends as $d_e$.
 
 \begin{enumerate}[label=(\alph*)]
-    \item \textbf{Counterexample:} Suppose workshop $1$, such that $s_1 = d_o$
+    \item This is not an optimal algorithm.
+
+    \textbf{Counterexample:} Suppose workshop $1$, such that $s_1 = d_o$
     and $t_1 = d_e$. Suppose there is another workshop ($2$) that starts a minute
     after workshop $1$ and ends during workshop $1$. $\therefore s_2=s_1 + 1, t_2=x$
     such that $s_1+1 < x < t_1$. Suppose another workshop $3$, such that 
@@ -76,13 +124,25 @@ Assume the day begins at $d_o$ and ends as $d_e$.
     Therefore, only one workshop will be selected to visit,
     despite the opportunity to visit two during the day.
 
-    \item \textbf{Proof:} When selecting the next latest event, any overlaps are removed.
-    Therefore, If this other workshop which started earlier was kept, than the current
-    worshop could not be visited. In this case, it is safer to chose the later workshop,
-    as it can not cause any other conflicts. Therefore, this algorithm will give you the
-    most number of workshops able to visit.
+    \item This is an optimal algorithm.
+    
+    \textbf{Proof:} Let each workshop be $w_i$ in $W$.
+    For each workshop $w_i$ there is a set $O_i$ of the workshops overlapping $w_i$.
+    Let $w_a$ and $w_b$ be overlapping workshops,
+    with $w_a$ having the latest start time in $W$.
 
-    \item \textbf{Counterexample:} Suppose three workshops:
+    Therefore, it is not possible for another workshop to begin after $w_a$.
+    Thus, as $w_b$ overlaps with $w_a$, $O_a \subset O_b$.
+    Given this situation, $|O_a| \leq |O_b|$ must be true for any $w_b$ overlapping $w_a$.
+    Therefore, it must be optimal to select $w_a$.
+
+    Next, $w_a$ and all $w_b$ are removed from the available workshops,
+    and the process begins once again.
+    The new $w_a$ will be the remaining workshop with the latest starting time.
+
+    \item The is not an optimal algorithm.
+    
+    \textbf{Counterexample:} Suppose three workshops:
         \begin{enumerate}[label=\arabic*]
             \item Length x
             \item Length x+1
@@ -96,21 +156,39 @@ Assume the day begins at $d_o$ and ends as $d_e$.
 
 \subsection{Part 2}
 
-\begin{enumerate}
-    \item Let $S$ be the list of stands
-    \item Let $V$ contain each visit
-    \item Calculate necessary trips, given stands $S$
-    \item Sort stands by open time in increasing order
-    \item Start with stands of smallest lengths open, and find all overlapping workshops
-        % THIS IS A BIT WOOLY
-    \item Combine all overlapping workshops into one visit, add to $V$ and remove from $S$
-    \item Continue until $S$ is empty
-    \item Return $V$
-\end{enumerate}
+The pseudocode can be found in \textbf{Algorithm \ref{standsalgo}}
 
-This algorithm must return the optimal solution, as it prioritizes the least flexible stands.
-Each greedy step will not compromise any following step, as each subsequent stand is more flexible.
+\begin{algorithm}
+    \caption{Workshop visits}
+    \label{standsalgo}
+    \begin{algorithmic}
+        \Function{VisitStands}{$S$} \Comment{given $S$ the list of stands}
+            \State $V \gets []$     \Comment{Stores each visit}
+            \State $S_{sorted} \gets \Call{SortEarliestEnd}{S}$
+                \Comment{Sort in earliest to latest end time}
+            \item[]
+            \For{$w$ in $S_{sorted}$}
+                \State Remove $w$ from $S_{sorted}$
+                \State $G \gets [w]$
+                \item[]
+                \State Get all workshops $A$ overlapping with w
+                \State Remove all $A$ from $S_{sorted}$
+                \State Add $A$ to $G$
+                \item[]
+                \State Add $G$ to $V$
+            \EndFor
 
+            % PROBLEM: This doesn't select times
+            \State \Return $V$
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+This algorithm must return the optimal solution.
+It is proved by induction... \\
+\textbf{I need to learn more rigorous proofs}
+
+\pagebreak
 \section{Problem 3}
 
 \begin{enumerate}[label=\alph*)]
@@ -123,33 +201,56 @@ Each greedy step will not compromise any following step, as each subsequent stan
             \item 30
         \end{enumerate}
     \item Process:
-        \begin{enumerate}[label=\arabic*:]
-            \item Sort N in increasing order
-            \item Pick next smallest staff member
-            \item Add all subsequent stations within 10 miles
-            \item Place station in middle of the group
-            \item Continue until all staff members processed.
-            \item \textbf{Return} set.
-        \end{enumerate}
+        The pseudocode is documented in \textbf{Algorithm \ref{wifialgo}}
+        \begin{algorithm}
+            \caption{WiFi towers}
+            \label{wifialgo}
+            \begin{algorithmic}[1]
+                \Function{WiFiTowers}{$N$}  \Comment{given $N$ the location of customers}
+                    \State Let $T$ be the an empty set of towers
+                    \item[]
+                    \State Let $N_{sorted}$ be $N$ in increasing distance along $l$
+                    \For{$c_i$ in $N_{sorted}$}
+                        \State Remove $c_i$ from $N_{sorted}$
+                        \State Let $p_i$ be the position along $l$ of $c_i$
+                        \item[]
+                        \State Create new tower $t_i$ of position $p_i + d/2$
+                        \State Add new tower $t_i$ to $T$
+                        \item[]
+                        \For{$c_j$ in $N_{sorted}$}
+                            \If{$c_j$ overlaps with $t_i$}
+                                \State Remove $c_j$ from $N_{sorted}$
+                            \Else
+                                \State Break from inner loop
+                            \EndIf
+                        \EndFor
+                    \EndFor
+                \EndFunction
+            \end{algorithmic}
+        \end{algorithm}
         
         By first sorting the set, and then beginning from the smaller side,
         the station must be $\geq x_1$ for $x_i$ the position of next smallest
-        distance staff $i$. Therefore, all the other staff within $10$ to the right
-        can share a station. This continues until all staff members are visited.
+        distance staff $i$.
+        Therefore, all the other customers within $d$ to the right can share a station.
+        In subsequent iterations, all customers to the left have already been
+        handled by a tower, and therefore no longer need to be considered.
+        This continues until all customers members are visited.
         This must be the most efficient, as as a bare minimum, every staff member
         requires a station, however can be grouped to save on overall count.
 
         The runtime will be $O(n \log{n} + n) = O(n \log{n})$.
-        This is because a sort is first necessary ($O(n \log{n})$)
-        and then grouping the staff members subsequently
-        take a full iteration through the set ($O(n)$).
+        This is because a sort is first necessary ($O(n \log{n})$).
+        Subsequently, the $n$ customers are grouped.
+        As each customer is visited only once, the loop takes $O(n)$ time.
 
-    \item In this case, the staff members will still be sorted by distance along $\ell$.
-        The search will have to be performed until the next staff member
-        has $\Delta \ell > 10$. However, not all staff members within this range will be
-        grouped. A staff member will be in range if their
-        distance $d \leq \sqrt{(\Delta x-5)^2 + y^2}$.
-        The grouped staff members will be removed from $N$, and then the algorithm
+    \item In this case, the consumers will still be sorted by distance along $\ell$.
+        The search will have to be performed until the next consumer
+        has $\Delta \ell > d$.
+        However, not all consumers within this range will be grouped.
+        A consumer will be in range and will be grouped if their distance
+        $d \leq \sqrt{(\Delta x- \frac{d}{2})^2 + y^2}$.
+        The grouped consumers will be removed from $N$, and then the algorithm
         will start again at the beginning of the remainin sorted set.
         
     \item Yes, this algorithm does depend on a linear arrangement of staff.
@@ -159,6 +260,7 @@ Each greedy step will not compromise any following step, as each subsequent stan
         add multiple stations.
 \end{enumerate}
 
+\pagebreak
 \section{Problem 4}
 
 \begin{enumerate}
@@ -230,32 +332,50 @@ Each greedy step will not compromise any following step, as each subsequent stan
 \begin{enumerate}[label=\alph*.]
     \item Algorithm \ref{marginalgo} given $S$ an array of words in the sentence
 
-    % Instead build backwards?
     \begin{algorithm}
-        \caption{Three-split merge sort}
+        \caption{Margin penalty calculation}
         \label{marginalgo}
-        \begin{algorithmic}[1] % The number tells where the line numbering should start
-            \Procedure{Margin}{$S, m, l$} \Comment{Cost for sentence $S$ in margin size $m$ given existing line length $l$}
+        \begin{algorithmic}[1]
+            \Function{Margin}{$S, m$} \Comment{Cost for sentence $S$ in margin size $m$}
                 \If{$isempty(S)$}
                     \State \textbf{return} 0
                 \EndIf
                 \item[]
-                \State $case1 \gets (len(L)-m)^2 + $ \Call{Margin}{$S[2...], m, 0$}
-                \Comment{Start new line. Cost is this line plus all subsequent.}
+                \State Create array $C[1\dots n][1\dots n]$ \Comment{contains total characters of words $i\to j$}
+                \State Create array $T[1\dots n+1]$         \Comment{cost of optimal arrangement of words $1\to i$}
+                \State Create arary $P[1\dots n+1]$         \Comment{word at the start of last line given $i$ words}
+                \State $T[0]=0$ and $P[0]=0$
+                \State Create empty list $b$                \Comment{final list of words starting sentences}
                 \item[]
-                \State $case2 \gets $ \Call{Margin}{$S[2...], m, (l+1+len(S[1]))$}
-                \Comment{Continue this line including cost of this word and space.}
+                \For{$i=0\to n-1$}
+                    \State $C(i,i) = len(i)$
+                    \For{$j=i\to n-1$}
+                        \State $C(i,j+1)=C(i,j) + 1 + len(j+1)$
+                    \EndFor
+                \EndFor
                 \item[]
-                \State \textbf{return} $min(case1, case2)$
-            \EndProcedure
+                \For{$j=1\to n$}    \Comment{determine optimal cost if $j$ ends a line}
+                    \State $T(j) = \min_{i \in (0\dots j-1)}{\lbrack T(i) + (m- C(i,j-1))^2 \rbrack}$
+                    \item[]         \Comment{try each $i$ ending previous line}
+                    \State $P(j) = i$ from above that minimized value
+                \EndFor
+                \item[]
+                \State $w=\min{T(i)}$ such that $\{i, C(i, n-1) \leq m\}$
+                \While{$w\not=0$}   \Comment{track back to build up newlines list}
+                    \State Add $w$ to $b$   \Comment{add to newlines list}
+                    \State $w = P(w)$
+                \EndWhile
+                \item[]
+                \State\Return $b$
+            \EndFunction
         \end{algorithmic}
     \end{algorithm}
 
-    \item This algorithm will attempt all possible combinations of newlines between words, selecting the minimum paths.
-        Therefore, this algorithm must be correct as it tries all combinations.
-    \item The runtime will be $O(2^n)$ for number of words $n$, as for each word calls the same function twice
-        on a slightly smaller set. Therefore, each word causes twice the subsequent operations to occur and corresponds
-        to a doubling of runtime for each word, hence the exponential.
+    \item This dynamic programming algorithm calculate the post for all different sets of sequential words.
+    Therefore, as the minimum sets are used, it must return the optimal solution.
+    \item The runtime will be $O(n^2) + O(n^2) + O(n) = O(n^2)$ for number of words $n$,
+    as there are two pairs of two nested loops operating along the length of the set, in series,
+    along with a final single loop.
 \end{enumerate}
 
 \end{document}
