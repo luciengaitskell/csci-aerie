@@ -43,6 +43,8 @@ class DataLoader:
         with gzip.GzipFile(fileobj=fstream) as bytestream:
             data = np.frombuffer(bytestream.read(), np.uint8, offset=header)
 
+        data = data.astype(np.float32)
+        data /= 255
         return data.reshape(-1, dsize)
 
     def _load_from_url(self, url, header, dsize):
