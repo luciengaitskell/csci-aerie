@@ -6,6 +6,7 @@ import os
 import io
 # Killing optional CPU driver warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+DEBUG = False
 
 PACKAGE_DIR = os.path.dirname(__file__)
 DATA_DIR = os.path.join(PACKAGE_DIR, "bin")
@@ -19,16 +20,16 @@ class DataLoader:
     def __init__(self):
         """  """
         self.data_path = Path(DATA_DIR)
-        self.train_images = self._load_from_url(self.URL_TRAIN_IMAGE, header=16, dsize=784)
+        self.train_images = self._load_from_url(self.URL_TRAIN_IMAGE, header=16, dsize=784, normalize=True)
         self.train_labels = self._load_from_url(self.URL_TRAIN_LABEL, header=8, dsize=1)
-        self.test_images = self._load_from_url(self.URL_TEST_IMAGE, header=16, dsize=784)
+        self.test_images = self._load_from_url(self.URL_TEST_IMAGE, header=16, dsize=784, normalize=True)
         self.test_labels = self._load_from_url(self.URL_TEST_LABEL, header=8, dsize=1)
 
     def _download(self, url):
         r = requests.get(url)
         return io.BytesIO(r.content)
 
-    def _load_fdata(self, fstream, header, dsize):
+    def _load_fdata(self, fstream, header, dsize, normalize=False):
         """
         Load file stream into list of numpy arrays based on characteristics
 
@@ -43,10 +44,130 @@ class DataLoader:
         with gzip.GzipFile(fileobj=fstream) as bytestream:
             data = np.frombuffer(bytestream.read(), np.uint8, offset=header)
 
-        data = data.astype(np.float32)
-        data /= 255
+        if normalize:
+            data = data.astype(np.float32)
+            data /= 255
         return data.reshape(-1, dsize)
 
-    def _load_from_url(self, url, header, dsize):
-        return self._load_fdata(self._download(url), header=header, dsize=dsize)
+    def _load_from_url(self, url, header, dsize, **kwargs):
+        return self._load_fdata(self._download(url), header=header, dsize=dsize, **kwargs)
 
+
+class Model:
+    """
+        This model class provides the data structures for your NN, 
+        and has functions to test the three main aspects of the training.
+        The data structures should not change after each step of training.
+        You can add to the class, but do not change the 
+        stencil provided except for the blanks and pass statements.
+        Make sure that these functions work with a loop to call them multiple times,
+        instead of implementing training over multiple steps in the function
+        Arguments: 
+        train_images - NumPy array of training images
+        train_labels - NumPy array of labels
+    """
+    def __init__(self, train_images, train_labels):
+        input_size, self.num_classes, self.batch_size, self.learning_rate = 784, 10, 100, 0.5
+        self.train_images = train_images
+        self.train_labels = train_labels
+        # sets up weights and biases...
+
+        # Weights are indexed by pixel then by class (number)
+        self.W = np.zeros((input_size, self.num_classes,), dtype=np.float64)
+        # Biases for each class (number)
+        self.b = np.zeros((self.num_classes,), dtype=np.float64)
+
+    def run(self):
+        """
+        Does the forward pass, loss calculation, and back propagation 
+        for this model for one step
+        Args: None
+        Return: None
+        """
+        if DEBUG: print("Start train")
+        for i in range(0, self.train_images.shape[0], self.batch_size):
+            self.run_batch(i, i+self.batch_size)
+
+
+
+    def run_batch(self, start, end):
+        if DEBUG: print("start batch: {}->{}".format(start, end))
+        # Run current net on all train images
+        logits_original = np.dot(self.train_images[start:end], self.W) + self.b
+        """
+        # will be in the format of:
+        [
+            [perceptron 1, perceptron 2, perceptron 3, ...],  # image 1
+            [perceptron 1, perceptron 2, perceptron 3, ...],  # image 2
+            [perceptron 1, perceptron 2, perceptron 3, ...],  # image 3
+            ... 
+        ]
+        """
+        if DEBUG: print("Original Logits:", logits_original.shape)
+
+        # Softmax
+        logits_power = np.power(np.e, logits_original)
+        logits = logits_power / np.sum(logits_power, axis=1).reshape((-1, 1))
+        #logits = - np.log(logits_softmax)
+
+        # Create one hot structure from labels
+        one_hot_labels = np.eye(self.num_classes)[self.train_labels[start:end]].reshape((-1, self.num_classes,))
+        """
+        # will be in the format of:
+        [
+            [perceptron 1, perceptron 2, perceptron 3, ...],  # image 1
+            [perceptron 1, perceptron 2, perceptron 3, ...],  # image 2
+            [perceptron 1, perceptron 2, perceptron 3, ...],  # image 3
+            ... 
+        ]
+        where for each image only one perceptron is `1` and the others are `0`
+        """
+        if DEBUG: print("one_hot:", one_hot_labels.shape)
+
+        # Calculate loss between real and predicted values
+        loss = one_hot_labels - logits
+        if DEBUG: print("loss:", loss.shape)
+
+        # Update weights
+        delta_weight = self.train_images[start:end].T @ loss
+        #delta_weight = np.einsum("ik,ij->jk", loss, self.train_images)
+        if DEBUG: print(delta_weight)
+        self.W += delta_weight * self.learning_rate
+        if DEBUG: print("updated weights")
+
+    def accuracy_function(self, test_images, test_labels):
+        """
+        Calculates the accuracy of the model against test images and labels
+        DO NOT EDIT
+        Arguments
+        test_images: a normalized NumPy array
+        test_labels: a NumPy array of ints
+        """
+        scores = np.dot(test_images, self.W) + self.b
+        predicted_classes = np.argmax(scores, axis=1)
+        return np.mean(predicted_classes == test_labels)
+
+
+def main():
+    print("Running...")
+
+    # TO-DO: import MNIST test data
+    dl = DataLoader()
+
+    # TO-DO: Create Model with training data arrays that sets up the weights and biases.
+    m = Model(dl.train_images, dl.train_labels)
+
+    print("Model built")
+
+    # TO-DO: Run model for number of steps by calling run() each step
+    for i in range(5):
+        print("Train step {}...".format(i+1))
+        m.run()
+        print("...step finished")
+
+    # TO-DO: test the accuracy by calling accuracy_function with the test data
+    print("Accuracy:", m.accuracy_function(dl.test_images, dl.test_labels))
+
+
+if __name__ == '__main__':
+    main()
