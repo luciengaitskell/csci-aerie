@@ -18,25 +18,38 @@ DEBUG = False
 PACKAGE_DIR = os.path.dirname(__file__)
 DATA_DIR = os.path.join(PACKAGE_DIR, "bin")
 
+
+class DataFile:
+    """ Represents data file configuration """
+    def __init__(self, name, url):
+        self.name = name
+        self.url = url
+
+
 class DataLoader:
-    URL_TRAIN_IMAGE = "http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz"
-    URL_TRAIN_LABEL = "http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz"
-    URL_TEST_IMAGE = "http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz"
-    URL_TEST_LABEL = "http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz"
+    """ Handle remote and local loading of training and test data """
+    TRAIN_IMAGE = DataFile("train_image", "http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz")
+    TRAIN_LABEL = DataFile("train_label", "http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz")
+    TEST_IMAGE = DataFile("test_image", "http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz")
+    TEST_LABEL = DataFile("test_label", "http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz")
 
     def __init__(self):
-        """  """
         self.data_path = Path(DATA_DIR)
-        self.train_images = self._load_from_url(self.URL_TRAIN_IMAGE, header=16, dsize=784, normalize=True)
-        self.train_labels = self._load_from_url(self.URL_TRAIN_LABEL, header=8, dsize=1)
-        self.test_images = self._load_from_url(self.URL_TEST_IMAGE, header=16, dsize=784, normalize=True)
-        self.test_labels = self._load_from_url(self.URL_TEST_LABEL, header=8, dsize=1)
 
-    def _download(self, url):
+        # MNIST config:
+        self.train_images = self._load_file(self.TRAIN_IMAGE, header=16, dsize=784, normalize=True)
+        self.train_labels = self._load_file(self.TRAIN_LABEL, header=8, dsize=1)
+        self.test_images = self._load_file(self.TEST_IMAGE, header=16, dsize=784, normalize=True)
+        self.test_labels = self._load_file(self.TEST_LABEL, header=8, dsize=1)
+
+    @staticmethod
+    def _download(url):
+        """ Download content from URL """
         r = requests.get(url)
-        return io.BytesIO(r.content)
+        return r.content
 
-    def _load_fdata(self, fstream, header, dsize, normalize=False):
+    @staticmethod
+    def _load_fdata(fstream, header, dsize, normalize=False):
         """
         Load file stream into list of numpy arrays based on characteristics
 
@@ -56,8 +69,18 @@ class DataLoader:
             data /= 255
         return data.reshape(-1, dsize)
 
-    def _load_from_url(self, url, header, dsize, **kwargs):
-        return self._load_fdata(self._download(url), header=header, dsize=dsize, **kwargs)
+    @classmethod
+    def _load_file(cls, dfile: DataFile, header, dsize, **kwargs):
+        """ Load given file, first from disk and fallback to remote. """
+        disk_file = Path(DATA_DIR) / dfile.name     # Local path
+
+        if not disk_file.exists():                  # Download if missing
+            print("Download file: {}".format(dfile.name))
+            with open(disk_file, 'wb') as f:
+                f.write(cls._download(dfile.url))
+
+        with open(disk_file, 'rb') as f:            # Load from file (must be present)
+           return cls._load_fdata(f, header=header, dsize=dsize, **kwargs)
 
 
 class Model:
