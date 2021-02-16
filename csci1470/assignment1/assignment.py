@@ -160,9 +160,13 @@ class Model:
 
         # Update weights
         delta_weight = self.train_images[start:end].T @ loss
-        #delta_weight = np.einsum("ik,ij->jk", loss, self.train_images)
+        # delta_weight = np.einsum("ik,ij->jk", loss, self.train_images)
+        delta_bias = (np.ones((1,100)) @ loss).ravel()
+
         if DEBUG: print(delta_weight)
+        if DEBUG: print(delta_bias)
         self.W += delta_weight * self.learning_rate
+        self.b += delta_bias * self.learning_rate
         if DEBUG: print("updated weights")
 
     def accuracy_function(self, test_images, test_labels):
