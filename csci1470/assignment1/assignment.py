@@ -118,12 +118,8 @@ class Model:
         for i in range(0, self.train_images.shape[0], self.batch_size):
             self.run_batch(i, i+self.batch_size)
 
-
-
-    def run_batch(self, start, end):
-        if DEBUG: print("start batch: {}->{}".format(start, end))
-        # Run current net on all train images
-        logits_original = np.dot(self.train_images[start:end], self.W) + self.b
+    def logits(self, data):
+        logits_original = np.dot(data, self.W) + self.b
         """
         # will be in the format of:
         [
@@ -134,15 +130,19 @@ class Model:
         ]
         """
         if DEBUG: print("Original Logits:", logits_original.shape)
+        return logits_original
 
-        # Softmax
+    @staticmethod
+    def softmax(logits_original):
         logits_power = np.exp(logits_original)
         logit_sums = np.sum(logits_power, axis=0).reshape((1, -1))
         logits = logits_power / logit_sums
-        #logits = - np.log(logits_softmax)
+        # logits = - np.log(logits_softmax)
 
-        # Create one hot structure from labels
-        one_hot_labels = np.eye(self.num_classes)[self.train_labels[start:end]].reshape((-1, self.num_classes,))
+        return logits
+
+    def one_hots(self, data_labels):
+        one_hot_labels = np.eye(self.num_classes)[data_labels].reshape((-1, self.num_classes,))
         """
         # will be in the format of:
         [
@@ -155,20 +155,46 @@ class Model:
         """
         if DEBUG: print("one_hot:", one_hot_labels.shape)
 
-        # Calculate loss between real and predicted values
+        return one_hot_labels
+
+    def loss(self, one_hot_labels, logits):
         loss = one_hot_labels - logits
-        #loss = -np.log(loss_delta)
+        # loss = -np.log(loss_delta)
         if True: print("loss: {} max, {} min, {} mean".format(loss.max(), loss.min(), np.mean(loss)))
+        return loss
+
+    def loss_adjustment(self, data, loss):
+        return data @ loss
+
+    def backprop(self, delta_W, delta_b):
+        self.W += delta_W * self.learning_rate
+        self.b += delta_b * self.learning_rate
+
+    def run_batch(self, start, end):
+        if DEBUG: print("start batch: {}->{}".format(start, end))
+        # Run current net on all train images
+        logits_original = self.logits(self.train_images[start:end])
+
+        # Softmax
+        logits = self.softmax(logits_original)
+
+        # Create one hot structure from labels
+        one_hot_labels = self.one_hots(self.train_labels[start:end])
+
+        # Calculate loss between real and predicted values
+        loss = self.loss(one_hot_labels, logits)
 
         # Update weights
-        delta_weight = self.train_images[start:end].T @ loss
+        delta_weight = self.loss_adjustment(self.train_images[start:end].T, loss)
         # delta_weight = np.einsum("ik,ij->jk", loss, self.train_images)
-        delta_bias = (np.ones((1,100)) @ loss).ravel()
+        delta_bias = self.loss_adjustment(np.ones((1,100)), loss).ravel()
 
         if DEBUG: print(delta_weight)
         if DEBUG: print(delta_bias)
-        self.W += delta_weight * self.learning_rate
-        self.b += delta_bias * self.learning_rate
+        self.backprop(
+            delta_weight * self.learning_rate,
+            delta_bias * self.learning_rate
+        )
         if DEBUG: print("updated weights")
 
     def accuracy_function(self, test_images, test_labels):
