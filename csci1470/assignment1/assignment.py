@@ -136,8 +136,9 @@ class Model:
         if DEBUG: print("Original Logits:", logits_original.shape)
 
         # Softmax
-        logits_power = np.power(np.e, logits_original)
-        logits = logits_power / np.sum(logits_power, axis=1).reshape((-1, 1))
+        logits_power = np.exp(logits_original)
+        logit_sums = np.sum(logits_power, axis=0).reshape((1, -1))
+        logits = logits_power / logit_sums
         #logits = - np.log(logits_softmax)
 
         # Create one hot structure from labels
@@ -156,7 +157,8 @@ class Model:
 
         # Calculate loss between real and predicted values
         loss = one_hot_labels - logits
-        if DEBUG: print("loss:", loss.shape)
+        #loss = -np.log(loss_delta)
+        if True: print("loss: {} max, {} min, {} mean".format(loss.max(), loss.min(), np.mean(loss)))
 
         # Update weights
         delta_weight = self.train_images[start:end].T @ loss
