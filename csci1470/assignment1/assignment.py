@@ -187,7 +187,7 @@ class Model:
         # Update weights
         delta_weight = self.loss_adjustment(self.train_images[start:end].T, loss)
         # delta_weight = np.einsum("ik,ij->jk", loss, self.train_images)
-        delta_bias = self.loss_adjustment(np.ones((1,100)), loss).ravel()
+        delta_bias = self.loss_adjustment(np.ones((1,end-start)), loss).ravel()
 
         if DEBUG: print(delta_weight)
         if DEBUG: print(delta_bias)
