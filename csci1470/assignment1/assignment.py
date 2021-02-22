@@ -113,15 +113,25 @@ class Model:
         # Biases for each class (number)
         self.b = np.zeros((self.num_classes,), dtype=np.float64)
 
+        self.current_start = 0
+
     def run(self):
         """
-        Does the forward pass, loss calculation, and back propagation 
+        Does the forward pass, loss calculation, and back propagation
         for this model for one step
         Args: None
         Return: None
         """
+        self.run_batch(self.current_start, self.current_start+self.batch_size)
+        self.current_start += self.batch_size
+
+    def run_to(self, end=None):
         if DEBUG: print("Start train")
-        for i in range(0, self.train_images.shape[0], self.batch_size):
+
+        if end is None:
+            end = self.train_images.shape[0]
+
+        for i in range(0, end, self.batch_size):
             self.run_batch(i, i+self.batch_size)
 
     def logits(self, data):
@@ -166,7 +176,7 @@ class Model:
     def loss(self, one_hot_labels, logits):
         loss = one_hot_labels - logits
         # loss = -np.log(loss_delta)
-        if True: print("loss: {} max, {} min, {} mean".format(loss.max(), loss.min(), np.mean(loss)))
+        if DEBUG: print("loss: {} max, {} min, {} mean".format(loss.max(), loss.min(), np.mean(loss)))
         return loss
 
     def loss_adjustment(self, data, loss):
@@ -228,10 +238,14 @@ def main():
     print("Model built")
 
     # TO-DO: Run model for number of steps by calling run() each step
-    for i in range(5):
-        print("Train step {}...".format(i+1))
+    for i in range(int(6e4/m.batch_size)):
         m.run()
-        print("...step finished")
+
+    '''
+    m.run_to(
+        # end=int(1e4)
+    )
+    '''
 
     # TO-DO: test the accuracy by calling accuracy_function with the test data
     print("Accuracy:", m.accuracy_function(dl.test_images, dl.test_labels))
