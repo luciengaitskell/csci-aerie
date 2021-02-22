@@ -65,9 +65,15 @@ class DataLoader:
             data = np.frombuffer(bytestream.read(), np.uint8, offset=header)
 
         if normalize:
-            data = data.astype(np.float32)
-            data /= 255
-        return data.reshape(-1, dsize)
+            data = data.astype(np.float64)
+            data /= 255.0
+
+        if dsize == 1:
+            shape = -1
+        else:
+            shape = (-1, dsize)
+
+        return data.reshape(shape)
 
     @classmethod
     def _load_file(cls, dfile: DataFile, header, dsize, **kwargs):
@@ -135,7 +141,7 @@ class Model:
     @staticmethod
     def softmax(logits_original):
         logits_power = np.exp(logits_original)
-        logit_sums = np.sum(logits_power, axis=0).reshape((1, -1))
+        logit_sums = np.sum(logits_power, axis=1).reshape((-1, 1))
         logits = logits_power / logit_sums
         # logits = - np.log(logits_softmax)
 
